@@ -1,11 +1,11 @@
 import React from "react";
-import RowItem from "@/components/RowItem";
+import JokeItem from "@/components/JokeItem";
 
 function ListJokes({ jokes }) {
   return (
     <div>
       {jokes.map((joke) =>
-        <RowItem joke={joke} />
+        <JokeItem joke={joke} />
       )}
     </div>
   );
