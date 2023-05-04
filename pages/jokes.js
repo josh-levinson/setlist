@@ -4,7 +4,9 @@ function ListJokes({ jokes }) {
   return (
     <ul>
       {jokes.map((joke) =>
+      <div class="rounded">
         <li key={joke.name}>{joke.name}</li>
+      </div>
       )}
     </ul>
   );
@@ -18,7 +20,7 @@ export default function Jokes() {
   ];
 
   return (
-    <div>
+    <div class="flex p-5">
       <ListJokes jokes={jokes} />
     </div>
   );
