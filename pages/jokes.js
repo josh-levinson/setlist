@@ -1,5 +1,6 @@
 import React from "react";
 import JokeItem from "@/components/JokeItem";
+import Link from 'next/link'
 
 function ListJokes({ jokes }) {
   return (
@@ -19,8 +20,13 @@ export default function Jokes() {
   ];
 
   return (
-    <div class="flex p-5">
-      <ListJokes jokes={jokes} />
+    <div>
+      <div class="flex p-5">
+        <ListJokes jokes={jokes} />
+      </div>
+      <div>
+        <Link href="/tags">tags</Link>
+      </div>
     </div>
   );
 }

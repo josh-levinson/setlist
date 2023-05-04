@@ -1,5 +1,6 @@
 import React from "react";
 import TagItem from "@/components/TagItem";
+import Link from 'next/link';
 
 function ListTags({ tags }) {
   return (
@@ -13,6 +14,10 @@ function ListTags({ tags }) {
 export default function Tags() {
   const tags = ['dark', 'zany', 'sexy', 'awkward'];
 
-  return(<ListTags tags={tags} />)
-
+  return(
+    <div>
+      <ListTags tags={tags} />
+      <Link href="/jokes">jokes</Link>
+    </div>
+  );
 }
