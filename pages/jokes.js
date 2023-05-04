@@ -1,21 +1,20 @@
 import React from "react";
+import RowItem from "@/components/RowItem";
 
 function ListJokes({ jokes }) {
   return (
-    <ul>
+    <div>
       {jokes.map((joke) =>
-      <div class="rounded">
-        <li key={joke.name}>{joke.name}</li>
-      </div>
+        <RowItem joke={joke} />
       )}
-    </ul>
+    </div>
   );
 }
 
 export default function Jokes() {
   const jokes = [
-    { name: 'korea', rating: 5 },
-    { name: 'blind', rating: 2 },
+    { name: 'korea', rating: 5.0 },
+    { name: 'blind', rating: 2.0 },
     { name: 'herewego', rating: 3.5 }
   ];
 
