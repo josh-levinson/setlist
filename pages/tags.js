@@ -5,8 +5,8 @@ import Link from 'next/link';
 function ListTags({ tags }) {
   return (
     <div class="flex flex-row">
-      {tags.map((tags) =>
-        <TagItem tag={tags} />
+      {tags.map((tag) =>
+        <TagItem key={tag} tag={tag} />
       )}
     </div>
   );

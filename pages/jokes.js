@@ -6,7 +6,7 @@ function ListJokes({ jokes }) {
   return (
     <div>
       {jokes.map((joke) =>
-        <JokeItem joke={joke} />
+        <JokeItem key={joke.name} joke={joke} />
       )}
     </div>
   );
