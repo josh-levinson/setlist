@@ -1,0 +1,81 @@
+/* Tag Selector Component Styles */
+
+.selector {
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #f7fafc;
+}
+
+.selectedTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.selected {
+  opacity: 0.8;
+}
+
+.availableTags {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.label {
+  font-size: 0.9rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.available {
+  opacity: 0.6;
+}
+
+.available:hover {
+  opacity: 1;
+}
+
+.createSection {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1rem;
+}
+
+.createForm {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tagNameInput {
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  min-width: 150px;
+}
+
+.tagColorInput {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .createForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .tagNameInput {
+    min-width: auto;
+  }
+} 

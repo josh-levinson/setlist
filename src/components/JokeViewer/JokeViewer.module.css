@@ -1,0 +1,143 @@
+/* Joke Viewer Component Styles */
+
+.viewer {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.editBtn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.editBtn:hover {
+  background: #e6fffa;
+  transform: scale(1.1);
+}
+
+.content {
+  /* Content wrapper */
+}
+
+.title {
+  font-size: 2rem;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+}
+
+.metaInfo {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.metaLabel {
+  font-weight: 600;
+  color: #718096;
+}
+
+.ratingDisplay {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ratingValue {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.ratingStars {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.star {
+  color: #e2e8f0;
+  font-size: 0.8rem;
+}
+
+.star.filled {
+  color: #f6ad55;
+}
+
+.durationValue {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.tagsSection {
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  margin-bottom: 1rem;
+  color: #2d3748;
+  font-size: 1.1rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.contentSection {
+  margin-bottom: 2rem;
+}
+
+.contentText {
+  background: #f7fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  line-height: 1.6;
+  color: #4a5568;
+}
+
+.contentText p {
+  margin-bottom: 1rem;
+}
+
+.contentText p:last-child {
+  margin-bottom: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .metaInfo {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+} 

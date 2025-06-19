@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
-import type { Joke, Tag } from '../types';
-import { JokeCard } from './JokeCard';
+import type { Joke, Tag } from '../../types';
+import { JokeCard } from '../JokeCard';
+import styles from './JokeList.module.css';
+import shared from '../../styles/shared.module.css';
 
 interface JokeListProps {
   jokes: Joke[];
@@ -89,43 +91,43 @@ export function JokeList({ jokes, availableTags, onEdit, onDelete, onView, onTag
   const selectedTag = availableTags.find(tag => tag.id === selectedTagFilter);
 
   return (
-    <div className="joke-list">
-      <div className="joke-list-header">
-        <h2>Jokes ({filteredAndSortedJokes.length})</h2>
-        <div className="joke-stats">
+    <div className={`${styles.list} ${shared.container}`}>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Jokes ({filteredAndSortedJokes.length})</h2>
+        <div className={styles.stats}>
           <span>Total Duration: {totalDuration.toFixed(1)} min</span>
           <span>Average Rating: {averageRating.toFixed(1)}/10</span>
         </div>
       </div>
 
-      <div className="joke-list-controls">
-        <div className="search-box">
+      <div className={styles.controls}>
+        <div className={styles.searchBox}>
           <input
             type="text"
             placeholder="Search jokes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
+            className={`${styles.searchInput} ${shared.input}`}
           />
         </div>
 
-        <div className="sort-controls">
-          <span>Sort by:</span>
+        <div className={styles.sortControls}>
+          <span className={styles.sortLabel}>Sort by:</span>
           <button
             onClick={() => handleSort('name')}
-            className={`sort-btn ${sortBy === 'name' ? 'active' : ''}`}
+            className={`${styles.sortBtn} ${sortBy === 'name' ? styles.active : ''}`}
           >
             Name {sortBy === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
           </button>
           <button
             onClick={() => handleSort('rating')}
-            className={`sort-btn ${sortBy === 'rating' ? 'active' : ''}`}
+            className={`${styles.sortBtn} ${sortBy === 'rating' ? styles.active : ''}`}
           >
             Rating {sortBy === 'rating' && (sortDirection === 'asc' ? '↑' : '↓')}
           </button>
           <button
             onClick={() => handleSort('duration')}
-            className={`sort-btn ${sortBy === 'duration' ? 'active' : ''}`}
+            className={`${styles.sortBtn} ${sortBy === 'duration' ? styles.active : ''}`}
           >
             Duration {sortBy === 'duration' && (sortDirection === 'asc' ? '↑' : '↓')}
           </button>
@@ -133,41 +135,39 @@ export function JokeList({ jokes, availableTags, onEdit, onDelete, onView, onTag
       </div>
 
       {(searchTerm || selectedTagFilter) && (
-        <div className="active-filters">
-          <span>Active filters:</span>
+        <div className={styles.activeFilters}>
+          <span className={styles.filterLabel}>Active filters:</span>
           {searchTerm && (
-            <span className="filter-tag">
+            <span className={styles.filterTag}>
               Search: "{searchTerm}" ×
-              <button onClick={() => setSearchTerm('')} className="clear-filter">×</button>
+              <button onClick={() => setSearchTerm('')} className={styles.clearFilter}>×</button>
             </span>
           )}
           {selectedTag && (
-            <span className="filter-tag" style={{ backgroundColor: selectedTag.color }}>
+            <span className={styles.filterTag} style={{ backgroundColor: selectedTag.color }}>
               Tag: {selectedTag.name}
-              <button onClick={() => setSelectedTagFilter(null)} className="clear-filter">×</button>
+              <button onClick={() => setSelectedTagFilter(null)} className={styles.clearFilter}>×</button>
             </span>
           )}
-          <button onClick={clearFilters} className="clear-all-filters">
+          <button onClick={clearFilters} className={styles.clearAllFilters}>
             Clear All
           </button>
         </div>
       )}
 
       {filteredAndSortedJokes.length === 0 ? (
-        <div className="no-jokes">
+        <div className={styles.noJokes}>
           {searchTerm || selectedTagFilter ? 'No jokes found matching your filters.' : 'No jokes yet. Create your first joke!'}
         </div>
       ) : (
-        <div className="jokes-grid">
+        <div className={styles.grid}>
           {filteredAndSortedJokes.map(joke => (
             <JokeCard
               key={joke.id}
               joke={joke}
-              availableTags={availableTags}
               onEdit={onEdit}
               onDelete={onDelete}
-              onView={onView}
-              onTagClick={handleTagClick}
+              onClick={onView}
             />
           ))}
         </div>

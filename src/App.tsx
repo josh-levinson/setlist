@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import type { Joke, Tag } from './types'
-import { JokeForm } from './components/JokeForm'
-import { JokeList } from './components/JokeList'
-import { JokeViewer } from './components/JokeViewer'
+import { JokeForm, JokeList, JokeViewer } from './components'
 import { dummyJokes } from './data/dummyData'
-import './App.css'
+import styles from './App.module.css'
+import shared from './styles/shared.module.css'
 
 type ViewMode = 'list' | 'create' | 'edit' | 'view'
 
@@ -81,17 +80,17 @@ function App() {
   }
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>🎭 Comedy Setlist Manager</h1>
+    <div className={styles.app}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>🎭 Comedy Setlist Manager</h1>
         {viewMode === 'list' && (
-          <button onClick={handleCreateNew} className="btn-primary">
+          <button onClick={handleCreateNew} className={shared.btnPrimary}>
             + Add New Joke
           </button>
         )}
       </header>
 
-      <main className="app-main">
+      <main className={styles.main}>
         {viewMode === 'list' && (
           <JokeList
             jokes={jokes}

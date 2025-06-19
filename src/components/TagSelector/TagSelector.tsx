@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import type { Tag } from '../types';
+import type { Tag } from '../../types';
+import styles from './TagSelector.module.css';
+import shared from '../../styles/shared.module.css';
 
 interface TagSelectorProps {
   availableTags: Tag[];
@@ -41,12 +43,12 @@ export function TagSelector({
   const unselectedTags = availableTags.filter(tag => !selectedTagIds.includes(tag.id));
 
   return (
-    <div className="tag-selector">
-      <div className="selected-tags">
+    <div className={styles.selector}>
+      <div className={styles.selectedTags}>
         {selectedTags.map(tag => (
           <button
             key={tag.id}
-            className="tag selected"
+            className={`${shared.tag} ${styles.selected}`}
             style={{ backgroundColor: tag.color }}
             onClick={() => handleTagToggle(tag.id)}
             title={`Remove ${tag.name}`}
@@ -57,12 +59,12 @@ export function TagSelector({
       </div>
 
       {unselectedTags.length > 0 && (
-        <div className="available-tags">
-          <span className="label">Available tags:</span>
+        <div className={styles.availableTags}>
+          <span className={styles.label}>Available tags:</span>
           {unselectedTags.map(tag => (
             <button
               key={tag.id}
-              className="tag available"
+              className={`${shared.tag} ${styles.available}`}
               style={{ backgroundColor: tag.color }}
               onClick={() => handleTagToggle(tag.id)}
               title={`Add ${tag.name}`}
@@ -74,39 +76,39 @@ export function TagSelector({
       )}
 
       {onCreateTag && (
-        <div className="create-tag-section">
+        <div className={styles.createSection}>
           {!showCreateForm ? (
             <button
-              className="btn-secondary small"
+              className={`${shared.btnSecondary} ${shared.btnSmall}`}
               onClick={() => setShowCreateForm(true)}
             >
               + Create New Tag
             </button>
           ) : (
-            <div className="create-tag-form">
+            <div className={styles.createForm}>
               <input
                 type="text"
                 placeholder="Tag name"
                 value={newTagName}
                 onChange={(e) => setNewTagName(e.target.value)}
-                className="tag-name-input"
+                className={styles.tagNameInput}
               />
               <input
                 type="color"
                 value={newTagColor}
                 onChange={(e) => setNewTagColor(e.target.value)}
-                className="tag-color-input"
+                className={styles.tagColorInput}
                 title="Choose tag color"
               />
               <button
-                className="btn-primary small"
+                className={`${shared.btnPrimary} ${shared.btnSmall}`}
                 onClick={handleCreateTag}
                 disabled={!newTagName.trim()}
               >
                 Create
               </button>
               <button
-                className="btn-secondary small"
+                className={`${shared.btnSecondary} ${shared.btnSmall}`}
                 onClick={() => setShowCreateForm(false)}
               >
                 Cancel
