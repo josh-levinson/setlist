@@ -1,65 +1,103 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Joke, Tag, Setlist } from './types'
 import { JokeForm, JokeList, JokeViewer, SetlistList, SetlistForm, SetlistViewer } from './components'
-import { dummyJokes, dummySetlists } from './data/dummyData'
+import { LoginForm, SignUpForm } from './components/Auth'
+import { useAuth } from './contexts/AuthContext'
+import { jokeService, setlistService, tagService } from './services/dataService'
 import styles from './App.module.css'
 import shared from './styles/shared.module.css'
 
 type ViewMode = 'jokes' | 'setlists' | 'create-joke' | 'edit-joke' | 'view-joke' | 'create-setlist' | 'edit-setlist' | 'view-setlist'
 
-// Sample tags for demonstration
-const sampleTags: Tag[] = [
-  { id: '1', name: 'Clean', color: '#10B981' },
-  { id: '2', name: 'Dark', color: '#6B7280' },
-  { id: '3', name: 'Political', color: '#EF4444' },
-  { id: '4', name: 'Observational', color: '#3B82F6' },
-  { id: '5', name: 'Story', color: '#8B5CF6' },
-  { id: '6', name: 'One-liner', color: '#F59E0B' },
-];
-
 function App() {
-  const [jokes, setJokes] = useState<Joke[]>(dummyJokes)
-  const [setlists, setSetlists] = useState<Setlist[]>(dummySetlists)
-  const [tags, setTags] = useState<Tag[]>(sampleTags)
+  const { user, loading, signOut } = useAuth()
+  const [jokes, setJokes] = useState<Joke[]>([])
+  const [setlists, setSetlists] = useState<Setlist[]>([])
+  const [tags, setTags] = useState<Tag[]>([])
   const [viewMode, setViewMode] = useState<ViewMode>('jokes')
   const [selectedJoke, setSelectedJoke] = useState<Joke | null>(null)
   const [selectedSetlist, setSelectedSetlist] = useState<Setlist | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login')
+
+  // Load user data when user changes
+  useEffect(() => {
+    if (user) {
+      loadUserData()
+    } else {
+      setJokes([])
+      setSetlists([])
+      setTags([])
+    }
+  }, [user])
+
+  const loadUserData = async () => {
+    if (!user) return
+    
+    setIsLoading(true)
+    try {
+      const [jokesData, setlistsData, tagsData] = await Promise.all([
+        jokeService.getJokes(user.id),
+        setlistService.getSetlists(user.id),
+        tagService.getTags(user.id)
+      ])
+      
+      setJokes(jokesData)
+      setSetlists(setlistsData)
+      setTags(tagsData)
+    } catch (error) {
+      console.error('Error loading user data:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   // Joke management functions
-  const handleCreateJoke = (jokeData: Omit<Joke, 'id'>) => {
-    const newJoke: Joke = {
-      ...jokeData,
-      id: Date.now().toString()
+  const handleCreateJoke = async (jokeData: Omit<Joke, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+    if (!user) return
+    
+    try {
+      const newJoke = await jokeService.createJoke({
+        ...jokeData,
+        user_id: user.id
+      })
+      setJokes(prev => [newJoke, ...prev])
+      setViewMode('jokes')
+    } catch (error) {
+      console.error('Error creating joke:', error)
     }
-    setJokes(prev => [...prev, newJoke])
-    setViewMode('jokes')
   }
 
-  const handleEditJoke = (jokeData: Omit<Joke, 'id'>) => {
-    if (!selectedJoke) return
+  const handleEditJoke = async (jokeData: Omit<Joke, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+    if (!selectedJoke || !user) return
     
-    const updatedJoke: Joke = {
-      ...jokeData,
-      id: selectedJoke.id
+    try {
+      const updatedJoke = await jokeService.updateJoke(selectedJoke.id, jokeData)
+      setJokes(prev => prev.map(joke => 
+        joke.id === selectedJoke.id ? updatedJoke : joke
+      ))
+      setViewMode('jokes')
+      setSelectedJoke(null)
+    } catch (error) {
+      console.error('Error updating joke:', error)
     }
-    
-    setJokes(prev => prev.map(joke => 
-      joke.id === selectedJoke.id ? updatedJoke : joke
-    ))
-    setViewMode('jokes')
-    setSelectedJoke(null)
   }
 
-  const handleDeleteJoke = (id: string) => {
-    setJokes(prev => prev.filter(joke => joke.id !== id))
-    // Also remove from setlists
-    setSetlists(prev => prev.map(setlist => ({
-      ...setlist,
-      jokes: setlist.jokes.filter(joke => joke.id !== id),
-      totalDuration: setlist.jokes
-        .filter(joke => joke.id !== id)
-        .reduce((sum, joke) => sum + joke.duration, 0)
-    })).filter(setlist => setlist.jokes.length > 0))
+  const handleDeleteJoke = async (id: string) => {
+    try {
+      await jokeService.deleteJoke(id)
+      setJokes(prev => prev.filter(joke => joke.id !== id))
+      // Also remove from setlists
+      setSetlists(prev => prev.map(setlist => ({
+        ...setlist,
+        jokes: setlist.jokes.filter(joke => joke.id !== id),
+        totalDuration: setlist.jokes
+          .filter(joke => joke.id !== id)
+          .reduce((sum, joke) => sum + joke.duration, 0)
+      })).filter(setlist => setlist.jokes.length > 0))
+    } catch (error) {
+      console.error('Error deleting joke:', error)
+    }
   }
 
   const handleViewJoke = (joke: Joke) => {
@@ -73,32 +111,43 @@ function App() {
   }
 
   // Setlist management functions
-  const handleCreateSetlist = (setlistData: Omit<Setlist, 'id'>) => {
-    const newSetlist: Setlist = {
-      ...setlistData,
-      id: Date.now().toString()
+  const handleCreateSetlist = async (setlistData: Omit<Setlist, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+    if (!user) return
+    
+    try {
+      const newSetlist = await setlistService.createSetlist({
+        ...setlistData,
+        user_id: user.id
+      })
+      setSetlists(prev => [newSetlist, ...prev])
+      setViewMode('setlists')
+    } catch (error) {
+      console.error('Error creating setlist:', error)
     }
-    setSetlists(prev => [...prev, newSetlist])
-    setViewMode('setlists')
   }
 
-  const handleEditSetlist = (setlistData: Omit<Setlist, 'id'>) => {
-    if (!selectedSetlist) return
+  const handleEditSetlist = async (setlistData: Omit<Setlist, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+    if (!selectedSetlist || !user) return
     
-    const updatedSetlist: Setlist = {
-      ...setlistData,
-      id: selectedSetlist.id
+    try {
+      const updatedSetlist = await setlistService.updateSetlist(selectedSetlist.id, setlistData)
+      setSetlists(prev => prev.map(setlist => 
+        setlist.id === selectedSetlist.id ? updatedSetlist : setlist
+      ))
+      setViewMode('setlists')
+      setSelectedSetlist(null)
+    } catch (error) {
+      console.error('Error updating setlist:', error)
     }
-    
-    setSetlists(prev => prev.map(setlist => 
-      setlist.id === selectedSetlist.id ? updatedSetlist : setlist
-    ))
-    setViewMode('setlists')
-    setSelectedSetlist(null)
   }
 
-  const handleDeleteSetlist = (id: string) => {
-    setSetlists(prev => prev.filter(setlist => setlist.id !== id))
+  const handleDeleteSetlist = async (id: string) => {
+    try {
+      await setlistService.deleteSetlist(id)
+      setSetlists(prev => prev.filter(setlist => setlist.id !== id))
+    } catch (error) {
+      console.error('Error deleting setlist:', error)
+    }
   }
 
   const handleViewSetlist = (setlist: Setlist) => {
@@ -132,15 +181,55 @@ function App() {
     setViewMode('create-setlist')
   }
 
-  const handleCreateTag = (tagData: Omit<Tag, 'id'>) => {
-    const newTag: Tag = {
-      ...tagData,
-      id: Date.now().toString()
+  const handleCreateTag = async (tagData: Omit<Tag, 'id'>) => {
+    if (!user) return
+    
+    try {
+      const newTag = await tagService.createTag({
+        ...tagData,
+        user_id: user.id
+      })
+      setTags(prev => [...prev, newTag])
+    } catch (error) {
+      console.error('Error creating tag:', error)
     }
-    setTags(prev => [...prev, newTag])
+  }
+
+  // Show loading screen while auth is initializing
+  if (loading) {
+    return (
+      <div className={styles.app}>
+        <div className={styles.loading}>
+          <h2>Loading...</h2>
+        </div>
+      </div>
+    )
+  }
+
+  // Show auth screen if not logged in
+  if (!user) {
+    return (
+      <div className={styles.app}>
+        <div className={styles.authWrapper}>
+          {authMode === 'login' ? (
+            <LoginForm onSwitchToSignUp={() => setAuthMode('signup')} />
+          ) : (
+            <SignUpForm onSwitchToLogin={() => setAuthMode('login')} />
+          )}
+        </div>
+      </div>
+    )
   }
 
   const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className={styles.loading}>
+          <h2>Loading your data...</h2>
+        </div>
+      )
+    }
+
     switch (viewMode) {
       case 'jokes':
         return (
@@ -268,7 +357,13 @@ function App() {
             Setlists
           </button>
         </div>
-        {getHeaderButton()}
+        <div className={styles.userSection}>
+          <span className={styles.userEmail}>{user.email}</span>
+          {getHeaderButton()}
+          <button onClick={signOut} className={shared.btnSecondary}>
+            Sign Out
+          </button>
+        </div>
       </header>
 
       <main className={styles.main}>

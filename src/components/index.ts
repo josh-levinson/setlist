@@ -5,4 +5,5 @@ export { JokeViewer } from './JokeViewer';
 export { TagSelector } from './TagSelector';
 export { SetlistList } from './SetlistList';
 export { SetlistForm } from './SetlistForm';
-export { SetlistViewer } from './SetlistViewer'; 
+export { SetlistViewer } from './SetlistViewer';
+export { LoginForm, SignUpForm } from './Auth'; 

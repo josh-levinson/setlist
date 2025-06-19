@@ -1,7 +1,14 @@
+export interface User {
+  id: string;
+  email: string;
+  created_at: string;
+}
+
 export interface Tag {
   id: string;
   name: string;
   color: string;
+  user_id: string; // Owner of the tag
 }
 
 export interface Joke {
@@ -11,6 +18,9 @@ export interface Joke {
   rating: number;
   duration: number; // in minutes
   tags: string[]; // array of tag IDs
+  user_id: string; // Owner of the joke
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Setlist {
@@ -18,4 +28,13 @@ export interface Setlist {
   name: string;
   jokes: Joke[];
   totalDuration: number;
+  user_id: string; // Owner of the setlist
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
 } 
