@@ -1,27 +1,36 @@
 import { useState, useMemo } from 'react';
-import type { Joke } from '../types';
+import type { Joke, Tag } from '../types';
 import { JokeCard } from './JokeCard';
 
 interface JokeListProps {
   jokes: Joke[];
+  availableTags: Tag[];
   onEdit: (joke: Joke) => void;
   onDelete: (id: string) => void;
   onView: (joke: Joke) => void;
+  onTagClick?: (tagId: string) => void;
 }
 
 type SortOption = 'name' | 'rating' | 'duration';
 type SortDirection = 'asc' | 'desc';
 
-export function JokeList({ jokes, onEdit, onDelete, onView }: JokeListProps) {
+export function JokeList({ jokes, availableTags, onEdit, onDelete, onView, onTagClick }: JokeListProps) {
   const [sortBy, setSortBy] = useState<SortOption>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTagFilter, setSelectedTagFilter] = useState<string | null>(null);
 
   const filteredAndSortedJokes = useMemo(() => {
-    let filtered = jokes.filter(joke =>
-      joke.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (joke.content && joke.content.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    let filtered = jokes.filter(joke => {
+      // Text search filter
+      const matchesSearch = joke.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (joke.content && joke.content.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+      // Tag filter
+      const matchesTag = !selectedTagFilter || joke.tags.includes(selectedTagFilter);
+      
+      return matchesSearch && matchesTag;
+    });
 
     filtered.sort((a, b) => {
       let aValue: string | number;
@@ -51,7 +60,7 @@ export function JokeList({ jokes, onEdit, onDelete, onView }: JokeListProps) {
     });
 
     return filtered;
-  }, [jokes, sortBy, sortDirection, searchTerm]);
+  }, [jokes, sortBy, sortDirection, searchTerm, selectedTagFilter]);
 
   const totalDuration = jokes.reduce((sum, joke) => sum + joke.duration, 0);
   const averageRating = jokes.length > 0 
@@ -67,10 +76,22 @@ export function JokeList({ jokes, onEdit, onDelete, onView }: JokeListProps) {
     }
   };
 
+  const handleTagClick = (tagId: string) => {
+    setSelectedTagFilter(selectedTagFilter === tagId ? null : tagId);
+    onTagClick?.(tagId);
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedTagFilter(null);
+  };
+
+  const selectedTag = availableTags.find(tag => tag.id === selectedTagFilter);
+
   return (
     <div className="joke-list">
       <div className="joke-list-header">
-        <h2>Jokes ({jokes.length})</h2>
+        <h2>Jokes ({filteredAndSortedJokes.length})</h2>
         <div className="joke-stats">
           <span>Total Duration: {totalDuration.toFixed(1)} min</span>
           <span>Average Rating: {averageRating.toFixed(1)}/10</span>
@@ -111,9 +132,30 @@ export function JokeList({ jokes, onEdit, onDelete, onView }: JokeListProps) {
         </div>
       </div>
 
+      {(searchTerm || selectedTagFilter) && (
+        <div className="active-filters">
+          <span>Active filters:</span>
+          {searchTerm && (
+            <span className="filter-tag">
+              Search: "{searchTerm}" ×
+              <button onClick={() => setSearchTerm('')} className="clear-filter">×</button>
+            </span>
+          )}
+          {selectedTag && (
+            <span className="filter-tag" style={{ backgroundColor: selectedTag.color }}>
+              Tag: {selectedTag.name}
+              <button onClick={() => setSelectedTagFilter(null)} className="clear-filter">×</button>
+            </span>
+          )}
+          <button onClick={clearFilters} className="clear-all-filters">
+            Clear All
+          </button>
+        </div>
+      )}
+
       {filteredAndSortedJokes.length === 0 ? (
         <div className="no-jokes">
-          {searchTerm ? 'No jokes found matching your search.' : 'No jokes yet. Create your first joke!'}
+          {searchTerm || selectedTagFilter ? 'No jokes found matching your filters.' : 'No jokes yet. Create your first joke!'}
         </div>
       ) : (
         <div className="jokes-grid">
@@ -121,9 +163,11 @@ export function JokeList({ jokes, onEdit, onDelete, onView }: JokeListProps) {
             <JokeCard
               key={joke.id}
               joke={joke}
+              availableTags={availableTags}
               onEdit={onEdit}
               onDelete={onDelete}
               onView={onView}
+              onTagClick={handleTagClick}
             />
           ))}
         </div>

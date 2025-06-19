@@ -1,12 +1,15 @@
-import type { Joke } from '../types';
+import type { Joke, Tag } from '../types';
 
 interface JokeViewerProps {
   joke: Joke;
+  availableTags: Tag[];
   onEdit: (joke: Joke) => void;
   onBack: () => void;
 }
 
-export function JokeViewer({ joke, onEdit, onBack }: JokeViewerProps) {
+export function JokeViewer({ joke, availableTags, onEdit, onBack }: JokeViewerProps) {
+  const jokeTags = availableTags.filter(tag => joke.tags.includes(tag.id));
+
   return (
     <div className="joke-viewer">
       <div className="joke-viewer-header">
@@ -44,6 +47,23 @@ export function JokeViewer({ joke, onEdit, onBack }: JokeViewerProps) {
             <span className="duration-value">{joke.duration} minutes</span>
           </div>
         </div>
+
+        {jokeTags.length > 0 && (
+          <div className="joke-tags-section">
+            <h3>Tags</h3>
+            <div className="joke-tags">
+              {jokeTags.map(tag => (
+                <span
+                  key={tag.id}
+                  className="tag"
+                  style={{ backgroundColor: tag.color }}
+                >
+                  {tag.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {joke.content && (
           <div className="joke-content-section">

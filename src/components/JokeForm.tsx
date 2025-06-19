@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
-import type { Joke } from '../types';
+import type { Joke, Tag } from '../types';
+import { TagSelector } from './TagSelector';
 
 interface JokeFormProps {
   joke?: Joke;
+  availableTags: Tag[];
   onSubmit: (joke: Omit<Joke, 'id'>) => void;
   onCancel: () => void;
+  onCreateTag?: (tag: Omit<Tag, 'id'>) => void;
 }
 
-export function JokeForm({ joke, onSubmit, onCancel }: JokeFormProps) {
+export function JokeForm({ joke, availableTags, onSubmit, onCancel, onCreateTag }: JokeFormProps) {
   const [name, setName] = useState(joke?.name || '');
   const [content, setContent] = useState(joke?.content || '');
   const [rating, setRating] = useState(joke?.rating || 0);
   const [duration, setDuration] = useState(joke?.duration || 1);
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(joke?.tags || []);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -20,6 +24,7 @@ export function JokeForm({ joke, onSubmit, onCancel }: JokeFormProps) {
       setContent(joke.content || '');
       setRating(joke.rating);
       setDuration(joke.duration);
+      setSelectedTagIds(joke.tags || []);
     }
   }, [joke]);
 
@@ -50,7 +55,8 @@ export function JokeForm({ joke, onSubmit, onCancel }: JokeFormProps) {
         name: name.trim(),
         content: content.trim() || undefined,
         rating,
-        duration
+        duration,
+        tags: selectedTagIds
       });
     }
   };
@@ -79,6 +85,16 @@ export function JokeForm({ joke, onSubmit, onCancel }: JokeFormProps) {
           onChange={(e) => setContent(e.target.value)}
           rows={4}
           placeholder="Enter your joke content here..."
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Tags</label>
+        <TagSelector
+          availableTags={availableTags}
+          selectedTagIds={selectedTagIds}
+          onTagsChange={setSelectedTagIds}
+          onCreateTag={onCreateTag}
         />
       </div>
 

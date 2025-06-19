@@ -1,13 +1,15 @@
-import type { Joke } from '../types';
+import type { Joke, Tag } from '../types';
 
 interface JokeCardProps {
   joke: Joke;
+  availableTags: Tag[];
   onEdit: (joke: Joke) => void;
   onDelete: (id: string) => void;
   onView: (joke: Joke) => void;
+  onTagClick?: (tagId: string) => void;
 }
 
-export function JokeCard({ joke, onEdit, onDelete, onView }: JokeCardProps) {
+export function JokeCard({ joke, availableTags, onEdit, onDelete, onView, onTagClick }: JokeCardProps) {
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (confirm('Are you sure you want to delete this joke?')) {
@@ -19,6 +21,13 @@ export function JokeCard({ joke, onEdit, onDelete, onView }: JokeCardProps) {
     e.stopPropagation();
     onEdit(joke);
   };
+
+  const handleTagClick = (e: React.MouseEvent, tagId: string) => {
+    e.stopPropagation();
+    onTagClick?.(tagId);
+  };
+
+  const jokeTags = availableTags.filter(tag => joke.tags.includes(tag.id));
 
   return (
     <div className="joke-card" onClick={() => onView(joke)}>
@@ -45,6 +54,22 @@ export function JokeCard({ joke, onEdit, onDelete, onView }: JokeCardProps) {
       {joke.content && (
         <div className="joke-content">
           <p>{joke.content}</p>
+        </div>
+      )}
+
+      {jokeTags.length > 0 && (
+        <div className="joke-tags">
+          {jokeTags.map(tag => (
+            <button
+              key={tag.id}
+              className="tag"
+              style={{ backgroundColor: tag.color }}
+              onClick={(e) => handleTagClick(e, tag.id)}
+              title={`Filter by ${tag.name}`}
+            >
+              {tag.name}
+            </button>
+          ))}
         </div>
       )}
       

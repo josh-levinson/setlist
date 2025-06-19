@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Joke } from './types'
+import type { Joke, Tag } from './types'
 import { JokeForm } from './components/JokeForm'
 import { JokeList } from './components/JokeList'
 import { JokeViewer } from './components/JokeViewer'
@@ -8,8 +8,19 @@ import './App.css'
 
 type ViewMode = 'list' | 'create' | 'edit' | 'view'
 
+// Sample tags for demonstration
+const sampleTags: Tag[] = [
+  { id: '1', name: 'Clean', color: '#10B981' },
+  { id: '2', name: 'Dark', color: '#6B7280' },
+  { id: '3', name: 'Political', color: '#EF4444' },
+  { id: '4', name: 'Observational', color: '#3B82F6' },
+  { id: '5', name: 'Story', color: '#8B5CF6' },
+  { id: '6', name: 'One-liner', color: '#F59E0B' },
+];
+
 function App() {
-  const [jokes, setJokes] = useState<Joke[]>(dummyJokes)
+  const [jokes, setJokes] = useState<Joke[]>(dummyJokes.map(joke => ({ ...joke, tags: [] })))
+  const [tags, setTags] = useState<Tag[]>(sampleTags)
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selectedJoke, setSelectedJoke] = useState<Joke | null>(null)
 
@@ -61,6 +72,14 @@ function App() {
     setViewMode('create')
   }
 
+  const handleCreateTag = (tagData: Omit<Tag, 'id'>) => {
+    const newTag: Tag = {
+      ...tagData,
+      id: Date.now().toString()
+    }
+    setTags(prev => [...prev, newTag])
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -76,6 +95,7 @@ function App() {
         {viewMode === 'list' && (
           <JokeList
             jokes={jokes}
+            availableTags={tags}
             onEdit={handleEditClick}
             onDelete={handleDeleteJoke}
             onView={handleViewJoke}
@@ -84,22 +104,27 @@ function App() {
 
         {viewMode === 'create' && (
           <JokeForm
+            availableTags={tags}
             onSubmit={handleCreateJoke}
             onCancel={handleBackToList}
+            onCreateTag={handleCreateTag}
           />
         )}
 
         {viewMode === 'edit' && selectedJoke && (
           <JokeForm
             joke={selectedJoke}
+            availableTags={tags}
             onSubmit={handleEditJoke}
             onCancel={handleBackToList}
+            onCreateTag={handleCreateTag}
           />
         )}
 
         {viewMode === 'view' && selectedJoke && (
           <JokeViewer
             joke={selectedJoke}
+            availableTags={tags}
             onEdit={handleEditClick}
             onBack={handleBackToList}
           />
