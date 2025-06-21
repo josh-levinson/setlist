@@ -14,6 +14,17 @@ export const jokeService = {
     return data || []
   },
 
+  async getJoke(id: string): Promise<Joke> {
+    const { data, error } = await supabase
+      .from('jokes')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error) throw error
+    return data
+  },
+
   async createJoke(joke: Omit<Joke, 'id' | 'created_at' | 'updated_at'>): Promise<Joke> {
     const { data, error } = await supabase
       .from('jokes')
@@ -67,8 +78,28 @@ export const setlistService = {
     return (data || []).map(setlist => ({
       ...setlist,
       jokes: setlist.jokes.map((sj: any) => sj.joke),
-      totalDuration: setlist.jokes.reduce((sum: number, sj: any) => sum + sj.joke.duration, 0)
     }))
+  },
+
+  async getSetlist(id: string): Promise<Setlist> {
+    const { data, error } = await supabase
+      .from('setlists')
+      .select(`
+        *,
+        jokes:setlist_jokes(
+          joke:jokes(*)
+        )
+      `)
+      .eq('id', id)
+      .single()
+
+    if (error) throw error
+    
+    // Transform the data to match our Setlist interface
+    return {
+      ...data,
+      jokes: data.jokes.map((sj: any) => sj.joke),
+    }
   },
 
   async createSetlist(setlist: Omit<Setlist, 'id' | 'created_at' | 'updated_at'>): Promise<Setlist> {
@@ -100,7 +131,6 @@ export const setlistService = {
     return {
       ...setlistResult,
       jokes,
-      totalDuration: jokes.reduce((sum, joke) => sum + joke.duration, 0)
     }
   },
 
@@ -143,7 +173,6 @@ export const setlistService = {
     return {
       ...setlistResult,
       jokes: jokes || [],
-      totalDuration: (jokes || []).reduce((sum, joke) => sum + joke.duration, 0)
     }
   },
 

@@ -1,15 +1,16 @@
 import React from 'react';
-import type { Joke } from '../../types';
+import type { Joke, Tag } from '../../types';
 import styles from './JokeCard.module.css';
 
 interface JokeCardProps {
   joke: Joke;
+  availableTags: Tag[];
   onEdit: (joke: Joke) => void;
   onDelete: (id: string) => void;
   onClick: (joke: Joke) => void;
 }
 
-export const JokeCard: React.FC<JokeCardProps> = ({ joke, onEdit, onDelete, onClick }) => {
+export const JokeCard: React.FC<JokeCardProps> = ({ joke, availableTags, onEdit, onDelete, onClick }) => {
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
     onEdit(joke);
@@ -32,6 +33,9 @@ export const JokeCard: React.FC<JokeCardProps> = ({ joke, onEdit, onDelete, onCl
     ));
   };
 
+  // Filter available tags to get the ones associated with this joke
+  const jokeTags = availableTags.filter(tag => joke.tags.includes(tag.id));
+
   return (
     <div className={styles.card} onClick={handleClick}>
       <div className={styles.header}>
@@ -52,11 +56,15 @@ export const JokeCard: React.FC<JokeCardProps> = ({ joke, onEdit, onDelete, onCl
         ))}
       </div>
       
-      {joke.tags && joke.tags.length > 0 && (
+      {jokeTags.length > 0 && (
         <div className={styles.tags}>
-          {joke.tags.map((tagId) => (
-            <span key={tagId} className={styles.tag}>
-              {tagId}
+          {jokeTags.map((tag) => (
+            <span 
+              key={tag.id} 
+              className={styles.tag}
+              style={{ backgroundColor: tag.color }}
+            >
+              {tag.name}
             </span>
           ))}
         </div>

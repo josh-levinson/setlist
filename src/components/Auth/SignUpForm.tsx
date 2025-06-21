@@ -12,6 +12,7 @@ export function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
   const { signUp, error } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,14 +23,41 @@ export function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
     }
     
     setIsLoading(true)
+    setIsSuccess(false)
     
     try {
       await signUp(email, password)
+      setIsSuccess(true)
     } catch (err) {
       // Error is handled by the auth context
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (isSuccess) {
+    return (
+      <div className={styles.authContainer}>
+        <h2>Check Your Email</h2>
+        <div className={styles.successMessage}>
+          <p>We've sent a confirmation email to <strong>{email}</strong></p>
+          <p>Please check your inbox and click the confirmation link to activate your account.</p>
+          <p>If you don't see the email, check your spam folder.</p>
+        </div>
+        <button 
+          type="button" 
+          onClick={() => {
+            setIsSuccess(false)
+            setEmail('')
+            setPassword('')
+            setConfirmPassword('')
+          }}
+          className={shared.btnSecondary}
+        >
+          Back to Sign Up
+        </button>
+      </div>
+    )
   }
 
   return (

@@ -8,7 +8,7 @@ interface SetlistFormProps {
   setlist?: Setlist;
   availableJokes: Joke[];
   availableTags: Tag[];
-  onSubmit: (setlistData: Omit<Setlist, 'id'>) => void;
+  onSubmit: (setlistData: Omit<Setlist, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => void;
   onCancel: () => void;
 }
 
@@ -51,10 +51,9 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
       return;
     }
 
-    const setlistData: Omit<Setlist, 'id'> = {
+    const setlistData: Omit<Setlist, 'id' | 'user_id' | 'created_at' | 'updated_at'> = {
       name: name.trim(),
       jokes: selectedJokes,
-      totalDuration
     };
 
     onSubmit(setlistData);

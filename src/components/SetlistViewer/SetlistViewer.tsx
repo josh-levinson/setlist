@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Setlist, Tag } from '../../types';
+import { calculateSetlistDuration } from '../../types';
 import styles from './SetlistViewer.module.css';
 import shared from '../../styles/shared.module.css';
 
@@ -29,6 +30,7 @@ export const SetlistViewer: React.FC<SetlistViewerProps> = ({
     return `${mins}m`;
   };
 
+  const totalDuration = calculateSetlistDuration(setlist);
   const averageRating = setlist.jokes.length > 0
     ? (setlist.jokes.reduce((sum, joke) => sum + joke.rating, 0) / setlist.jokes.length).toFixed(1)
     : '0.0';
@@ -55,7 +57,7 @@ export const SetlistViewer: React.FC<SetlistViewerProps> = ({
           </div>
           <div className={styles.stat}>
             <span className={styles.statLabel}>Duration</span>
-            <span className={styles.statValue}>{formatDuration(setlist.totalDuration)}</span>
+            <span className={styles.statValue}>{formatDuration(totalDuration)}</span>
           </div>
           <div className={styles.stat}>
             <span className={styles.statLabel}>Avg Rating</span>
@@ -112,7 +114,7 @@ export const SetlistViewer: React.FC<SetlistViewerProps> = ({
       <div className={styles.summary}>
         <div className={styles.summaryItem}>
           <span className={styles.summaryLabel}>Total Duration:</span>
-          <span className={styles.summaryValue}>{formatDuration(setlist.totalDuration)}</span>
+          <span className={styles.summaryValue}>{formatDuration(totalDuration)}</span>
         </div>
         <div className={styles.summaryItem}>
           <span className={styles.summaryLabel}>Average Rating:</span>

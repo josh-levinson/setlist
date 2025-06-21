@@ -27,11 +27,15 @@ export interface Setlist {
   id: string;
   name: string;
   jokes: Joke[];
-  totalDuration: number;
   user_id: string; // Owner of the setlist
   created_at: string;
   updated_at: string;
 }
+
+// Utility function to calculate total duration from setlist jokes
+export const calculateSetlistDuration = (setlist: Setlist): number => {
+  return setlist.jokes.reduce((sum, joke) => sum + joke.duration, 0);
+};
 
 export interface AuthState {
   user: User | null;

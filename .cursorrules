@@ -1,0 +1,7 @@
+This is a Vite React project using bun
+
+Assume I can running bun dev in the background
+
+The project uses Supabase as its data store
+
+Prefer smaller, more granular components with discrete functionality

@@ -22,6 +22,26 @@
   font-size: 0.875rem;
 }
 
+.successMessage {
+  text-align: center;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  color: #0c4a6e;
+}
+
+.successMessage p {
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.successMessage strong {
+  color: #0369a1;
+}
+
 .form {
   display: flex;
   flex-direction: column;

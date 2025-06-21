@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Setlist, Joke, Tag } from '../../types';
+import { calculateSetlistDuration } from '../../types';
 import styles from './SetlistList.module.css';
 import shared from '../../styles/shared.module.css';
 
@@ -62,7 +63,7 @@ export const SetlistList: React.FC<SetlistListProps> = ({
                       {setlist.jokes.length} joke{setlist.jokes.length !== 1 ? 's' : ''}
                     </span>
                     <span className={styles.stat}>
-                      {formatDuration(setlist.totalDuration)}
+                      {formatDuration(calculateSetlistDuration(setlist))}
                     </span>
                   </div>
                 </div>

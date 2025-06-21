@@ -165,6 +165,7 @@ export function JokeList({ jokes, availableTags, onEdit, onDelete, onView, onTag
             <JokeCard
               key={joke.id}
               joke={joke}
+              availableTags={availableTags}
               onEdit={onEdit}
               onDelete={onDelete}
               onClick={onView}

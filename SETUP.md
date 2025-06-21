@@ -18,9 +18,6 @@
    Run these SQL commands in your Supabase SQL editor:
 
    ```sql
-   -- Enable Row Level Security
-   ALTER TABLE auth.users ENABLE ROW LEVEL SECURITY;
-
    -- Create jokes table
    CREATE TABLE jokes (
      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -39,7 +36,6 @@
      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
      user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
      name TEXT NOT NULL,
-     total_duration INTEGER NOT NULL DEFAULT 0,
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );
