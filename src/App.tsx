@@ -25,12 +25,23 @@ function AppHeader() {
   const { user, signOut } = useAuth();
   const location = useLocation();
 
-  if (!user) {
+  // Don't show auth wrapper on auth routes
+  if (!user && !location.pathname.startsWith("/auth/")) {
     return (
       <div className={styles.authWrapper}>
         <Auth />
       </div>
     );
+  }
+
+  // Don't show header on auth routes when not authenticated
+  if (!user && location.pathname.startsWith("/auth/")) {
+    return null;
+  }
+
+  // Don't show header if no user
+  if (!user) {
+    return null;
   }
 
   return (
@@ -76,26 +87,31 @@ function AppContent() {
     );
   }
 
-  // Show auth screen if not logged in
-  if (!user) {
-    return null; // Auth is handled in AppHeader
-  }
-
   return (
     <main className={styles.main}>
       <Routes>
-        <Route path="/" element={<Navigate to="/jokes" replace />} />
-        <Route path="/jokes" element={<JokesPage />} />
-        <Route path="/jokes/new" element={<JokeFormPage />} />
-        <Route path="/jokes/:id" element={<JokeViewPage />} />
-        <Route path="/jokes/:id/edit" element={<JokeFormPage />} />
-        <Route path="/setlists" element={<SetlistsPage />} />
-        <Route path="/setlists/new" element={<SetlistFormPage />} />
-        <Route path="/setlists/:id" element={<SetlistViewPage />} />
-        <Route path="/setlists/:id/edit" element={<SetlistFormPage />} />
+        {/* Auth routes - accessible without authentication */}
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
         <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
-        <Route path="*" element={<Navigate to="/jokes" replace />} />
+
+        {/* Protected routes - require authentication */}
+        {user ? (
+          <>
+            <Route path="/" element={<Navigate to="/jokes" replace />} />
+            <Route path="/jokes" element={<JokesPage />} />
+            <Route path="/jokes/new" element={<JokeFormPage />} />
+            <Route path="/jokes/:id" element={<JokeViewPage />} />
+            <Route path="/jokes/:id/edit" element={<JokeFormPage />} />
+            <Route path="/setlists" element={<SetlistsPage />} />
+            <Route path="/setlists/new" element={<SetlistFormPage />} />
+            <Route path="/setlists/:id" element={<SetlistViewPage />} />
+            <Route path="/setlists/:id/edit" element={<SetlistFormPage />} />
+            <Route path="*" element={<Navigate to="/jokes" replace />} />
+          </>
+        ) : (
+          // Redirect to auth if not authenticated and trying to access protected routes
+          <Route path="*" element={<Navigate to="/" replace />} />
+        )}
       </Routes>
     </main>
   );
