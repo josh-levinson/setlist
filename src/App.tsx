@@ -16,6 +16,7 @@ import {
   SetlistFormPage,
   SetlistViewPage,
   AuthCallbackPage,
+  ResetPasswordPage,
 } from "./pages";
 import styles from "./App.module.css";
 import shared from "./styles/shared.module.css";
@@ -93,6 +94,7 @@ function AppContent() {
         <Route path="/setlists/:id" element={<SetlistViewPage />} />
         <Route path="/setlists/:id/edit" element={<SetlistFormPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
         <Route path="*" element={<Navigate to="/jokes" replace />} />
       </Routes>
     </main>
