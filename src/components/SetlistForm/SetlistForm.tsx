@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import type { Setlist, Joke, Tag } from '../../types';
-import { TagSelector } from '../TagSelector';
-import styles from './SetlistForm.module.css';
-import shared from '../../styles/shared.module.css';
+import React, { useState } from "react";
+import type { Setlist, Joke, Tag } from "../../types";
+import styles from "./SetlistForm.module.css";
+import shared from "../../styles/shared.module.css";
 
 interface SetlistFormProps {
   setlist?: Setlist;
   availableJokes: Joke[];
   availableTags: Tag[];
-  onSubmit: (setlistData: Omit<Setlist, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => void;
+  onSubmit: (
+    setlistData: Omit<Setlist, "id" | "user_id" | "created_at" | "updated_at">
+  ) => void;
   onCancel: () => void;
 }
 
@@ -17,41 +18,48 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
   availableJokes,
   availableTags,
   onSubmit,
-  onCancel
+  onCancel,
 }) => {
-  const [name, setName] = useState(setlist?.name || '');
+  const [name, setName] = useState(setlist?.name || "");
   const [selectedJokeIds, setSelectedJokeIds] = useState<string[]>(
-    setlist?.jokes.map(joke => joke.id) || []
+    setlist?.jokes.map((joke) => joke.id) || []
   );
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const isEditing = !!setlist;
 
-  const filteredJokes = availableJokes.filter(joke =>
-    joke.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    joke.content?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredJokes = availableJokes.filter(
+    (joke) =>
+      joke.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      joke.content?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const selectedJokes = availableJokes.filter(joke => 
+  const selectedJokes = availableJokes.filter((joke) =>
     selectedJokeIds.includes(joke.id)
   );
 
-  const totalDuration = selectedJokes.reduce((sum, joke) => sum + joke.duration, 0);
+  const totalDuration = selectedJokes.reduce(
+    (sum, joke) => sum + joke.duration,
+    0
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name.trim()) {
-      alert('Please enter a setlist name');
+      alert("Please enter a setlist name");
       return;
     }
 
     if (selectedJokeIds.length === 0) {
-      alert('Please select at least one joke');
+      alert("Please select at least one joke");
       return;
     }
 
-    const setlistData: Omit<Setlist, 'id' | 'user_id' | 'created_at' | 'updated_at'> = {
+    const setlistData: Omit<
+      Setlist,
+      "id" | "user_id" | "created_at" | "updated_at"
+    > = {
       name: name.trim(),
       jokes: selectedJokes,
     };
@@ -60,9 +68,9 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
   };
 
   const toggleJokeSelection = (jokeId: string) => {
-    setSelectedJokeIds(prev => 
+    setSelectedJokeIds((prev) =>
       prev.includes(jokeId)
-        ? prev.filter(id => id !== jokeId)
+        ? prev.filter((id) => id !== jokeId)
         : [...prev, jokeId]
     );
   };
@@ -70,21 +78,25 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
   const moveJokeUp = (index: number) => {
     if (index === 0) return;
     const newSelectedJokeIds = [...selectedJokeIds];
-    [newSelectedJokeIds[index], newSelectedJokeIds[index - 1]] = 
-    [newSelectedJokeIds[index - 1], newSelectedJokeIds[index]];
+    [newSelectedJokeIds[index], newSelectedJokeIds[index - 1]] = [
+      newSelectedJokeIds[index - 1],
+      newSelectedJokeIds[index],
+    ];
     setSelectedJokeIds(newSelectedJokeIds);
   };
 
   const moveJokeDown = (index: number) => {
     if (index === selectedJokeIds.length - 1) return;
     const newSelectedJokeIds = [...selectedJokeIds];
-    [newSelectedJokeIds[index], newSelectedJokeIds[index + 1]] = 
-    [newSelectedJokeIds[index + 1], newSelectedJokeIds[index]];
+    [newSelectedJokeIds[index], newSelectedJokeIds[index + 1]] = [
+      newSelectedJokeIds[index + 1],
+      newSelectedJokeIds[index],
+    ];
     setSelectedJokeIds(newSelectedJokeIds);
   };
 
   const removeJoke = (jokeId: string) => {
-    setSelectedJokeIds(prev => prev.filter(id => id !== jokeId));
+    setSelectedJokeIds((prev) => prev.filter((id) => id !== jokeId));
   };
 
   const formatDuration = (minutes: number) => {
@@ -99,9 +111,11 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
   return (
     <div className={styles.setlistForm}>
       <div className={styles.header}>
-        <h2>{isEditing ? 'Edit Setlist' : 'Create New Setlist'}</h2>
+        <h2>{isEditing ? "Edit Setlist" : "Create New Setlist"}</h2>
         <p className={styles.subtitle}>
-          {isEditing ? 'Update your setlist details' : 'Organize your jokes into a setlist'}
+          {isEditing
+            ? "Update your setlist details"
+            : "Organize your jokes into a setlist"}
         </p>
       </div>
 
@@ -122,7 +136,9 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
         </div>
 
         <div className={styles.formSection}>
-          <label className={styles.label}>Selected Jokes ({selectedJokes.length})</label>
+          <label className={styles.label}>
+            Selected Jokes ({selectedJokes.length})
+          </label>
           <div className={styles.selectedJokes}>
             {selectedJokes.length === 0 ? (
               <p className={styles.emptyMessage}>No jokes selected yet</p>
@@ -133,7 +149,9 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
                     <span className={styles.jokeName}>{joke.name}</span>
                     <div className={styles.jokeDetails}>
                       <span className={styles.rating}>★ {joke.rating}</span>
-                      <span className={styles.duration}>{formatDuration(joke.duration)}</span>
+                      <span className={styles.duration}>
+                        {formatDuration(joke.duration)}
+                      </span>
                     </div>
                   </div>
                   <div className={styles.jokeActions}>
@@ -186,7 +204,7 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
               <div
                 key={joke.id}
                 className={`${styles.availableJoke} ${
-                  selectedJokeIds.includes(joke.id) ? styles.selected : ''
+                  selectedJokeIds.includes(joke.id) ? styles.selected : ""
                 }`}
                 onClick={() => toggleJokeSelection(joke.id)}
               >
@@ -194,12 +212,14 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
                   <span className={styles.jokeName}>{joke.name}</span>
                   <div className={styles.jokeDetails}>
                     <span className={styles.rating}>★ {joke.rating}</span>
-                    <span className={styles.duration}>{formatDuration(joke.duration)}</span>
+                    <span className={styles.duration}>
+                      {formatDuration(joke.duration)}
+                    </span>
                   </div>
                 </div>
                 <div className={styles.jokeTags}>
                   {joke.tags.map((tagId) => {
-                    const tag = availableTags.find(t => t.id === tagId);
+                    const tag = availableTags.find((t) => t.id === tagId);
                     return tag ? (
                       <span
                         key={tagId}
@@ -217,14 +237,21 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
         </div>
 
         <div className={styles.formActions}>
-          <button type="button" onClick={onCancel} className={`${shared.btn} ${shared.btnSecondary}`}>
+          <button
+            type="button"
+            onClick={onCancel}
+            className={`${shared.btn} ${shared.btnSecondary}`}
+          >
             Cancel
           </button>
-          <button type="submit" className={`${shared.btn} ${shared.btnPrimary}`}>
-            {isEditing ? 'Update Setlist' : 'Create Setlist'}
+          <button
+            type="submit"
+            className={`${shared.btn} ${shared.btnPrimary}`}
+          >
+            {isEditing ? "Update Setlist" : "Create Setlist"}
           </button>
         </div>
       </form>
     </div>
   );
-}; 
+};

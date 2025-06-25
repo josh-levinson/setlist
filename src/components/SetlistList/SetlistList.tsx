@@ -1,8 +1,8 @@
-import React from 'react';
-import type { Setlist, Joke, Tag } from '../../types';
-import { calculateSetlistDuration } from '../../types';
-import styles from './SetlistList.module.css';
-import shared from '../../styles/shared.module.css';
+import React from "react";
+import type { Setlist, Joke, Tag } from "../../types";
+import { calculateSetlistDuration } from "../../types";
+import styles from "./SetlistList.module.css";
+import shared from "../../styles/shared.module.css";
 
 interface SetlistListProps {
   setlists: Setlist[];
@@ -15,18 +15,13 @@ interface SetlistListProps {
 
 export const SetlistList: React.FC<SetlistListProps> = ({
   setlists,
-  availableJokes,
   availableTags,
   onEdit,
   onDelete,
-  onView
+  onView,
 }) => {
   const getTagById = (tagId: string) => {
-    return availableTags.find(tag => tag.id === tagId);
-  };
-
-  const getJokeById = (jokeId: string) => {
-    return availableJokes.find(joke => joke.id === jokeId);
+    return availableTags.find((tag) => tag.id === tagId);
   };
 
   const formatDuration = (minutes: number) => {
@@ -49,7 +44,9 @@ export const SetlistList: React.FC<SetlistListProps> = ({
 
       {setlists.length === 0 ? (
         <div className={styles.emptyState}>
-          <p>No setlists created yet. Create your first setlist to get started!</p>
+          <p>
+            No setlists created yet. Create your first setlist to get started!
+          </p>
         </div>
       ) : (
         <div className={styles.setlists}>
@@ -60,7 +57,8 @@ export const SetlistList: React.FC<SetlistListProps> = ({
                   <h3 className={styles.setlistName}>{setlist.name}</h3>
                   <div className={styles.setlistStats}>
                     <span className={styles.stat}>
-                      {setlist.jokes.length} joke{setlist.jokes.length !== 1 ? 's' : ''}
+                      {setlist.jokes.length} joke
+                      {setlist.jokes.length !== 1 ? "s" : ""}
                     </span>
                     <span className={styles.stat}>
                       {formatDuration(calculateSetlistDuration(setlist))}
@@ -96,7 +94,9 @@ export const SetlistList: React.FC<SetlistListProps> = ({
                       <span className={styles.jokeName}>{joke.name}</span>
                       <div className={styles.jokeDetails}>
                         <span className={styles.rating}>★ {joke.rating}</span>
-                        <span className={styles.duration}>{formatDuration(joke.duration)}</span>
+                        <span className={styles.duration}>
+                          {formatDuration(joke.duration)}
+                        </span>
                       </div>
                     </div>
                     <div className={styles.jokeTags}>
@@ -122,4 +122,4 @@ export const SetlistList: React.FC<SetlistListProps> = ({
       )}
     </div>
   );
-}; 
+};

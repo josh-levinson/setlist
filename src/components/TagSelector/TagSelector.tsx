@@ -1,28 +1,28 @@
-import { useState } from 'react';
-import type { Tag } from '../../types';
-import styles from './TagSelector.module.css';
-import shared from '../../styles/shared.module.css';
+import { useState } from "react";
+import type { Tag } from "../../types";
+import styles from "./TagSelector.module.css";
+import shared from "../../styles/shared.module.css";
 
 interface TagSelectorProps {
   availableTags: Tag[];
   selectedTagIds: string[];
   onTagsChange: (tagIds: string[]) => void;
-  onCreateTag?: (tag: Omit<Tag, 'id'>) => void;
+  onCreateTag?: (tag: { name: string; color: string }) => void;
 }
 
-export function TagSelector({ 
-  availableTags, 
-  selectedTagIds, 
-  onTagsChange, 
-  onCreateTag 
+export function TagSelector({
+  availableTags,
+  selectedTagIds,
+  onTagsChange,
+  onCreateTag,
 }: TagSelectorProps) {
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [newTagName, setNewTagName] = useState('');
-  const [newTagColor, setNewTagColor] = useState('#3B82F6');
+  const [newTagName, setNewTagName] = useState("");
+  const [newTagColor, setNewTagColor] = useState("#3B82F6");
 
   const handleTagToggle = (tagId: string) => {
     const newSelectedTags = selectedTagIds.includes(tagId)
-      ? selectedTagIds.filter(id => id !== tagId)
+      ? selectedTagIds.filter((id) => id !== tagId)
       : [...selectedTagIds, tagId];
     onTagsChange(newSelectedTags);
   };
@@ -31,21 +31,25 @@ export function TagSelector({
     if (newTagName.trim() && onCreateTag) {
       onCreateTag({
         name: newTagName.trim(),
-        color: newTagColor
+        color: newTagColor,
       });
-      setNewTagName('');
-      setNewTagColor('#3B82F6');
+      setNewTagName("");
+      setNewTagColor("#3B82F6");
       setShowCreateForm(false);
     }
   };
 
-  const selectedTags = availableTags.filter(tag => selectedTagIds.includes(tag.id));
-  const unselectedTags = availableTags.filter(tag => !selectedTagIds.includes(tag.id));
+  const selectedTags = availableTags.filter((tag) =>
+    selectedTagIds.includes(tag.id)
+  );
+  const unselectedTags = availableTags.filter(
+    (tag) => !selectedTagIds.includes(tag.id)
+  );
 
   return (
     <div className={styles.selector}>
       <div className={styles.selectedTags}>
-        {selectedTags.map(tag => (
+        {selectedTags.map((tag) => (
           <button
             key={tag.id}
             className={`${shared.tag} ${styles.selected}`}
@@ -61,7 +65,7 @@ export function TagSelector({
       {unselectedTags.length > 0 && (
         <div className={styles.availableTags}>
           <span className={styles.label}>Available tags:</span>
-          {unselectedTags.map(tag => (
+          {unselectedTags.map((tag) => (
             <button
               key={tag.id}
               className={`${shared.tag} ${styles.available}`}
@@ -119,4 +123,4 @@ export function TagSelector({
       )}
     </div>
   );
-} 
+}
