@@ -22,11 +22,44 @@
 
 .loading {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 400px;
   font-size: 1.2rem;
   color: #666;
+  text-align: center;
+}
+
+.loading h2 {
+  margin: 0 0 1rem 0;
+  color: #333;
+}
+
+.loading p {
+  margin: 0;
+  color: #666;
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  text-align: center;
+  padding: 2rem;
+}
+
+.error h2 {
+  margin: 0 0 1rem 0;
+  color: #dc2626;
+}
+
+.error p {
+  margin: 0 0 2rem 0;
+  color: #666;
+  max-width: 500px;
 }
 
 .btnPrimary {
@@ -59,4 +92,4 @@
 
 .btnSecondary:hover {
   background-color: #545b62;
-} 
+}

@@ -6,6 +6,8 @@ import { supabase } from "../lib/supabase";
 interface AuthContextType extends AuthState {
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithMagicLink: (email: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -76,6 +78,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const signInWithMagicLink = async (email: string) => {
+    try {
+      setError(null);
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      throw err;
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    try {
+      setError(null);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+      if (error) throw error;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      throw err;
+    }
+  };
+
   const signOut = async () => {
     try {
       setError(null);
@@ -95,6 +126,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error,
         signUp,
         signIn,
+        signInWithMagicLink,
+        resetPassword,
         signOut,
       }}
     >

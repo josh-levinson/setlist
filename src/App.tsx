@@ -1,26 +1,35 @@
-import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom'
-import { LoginForm, SignUpForm } from './components/Auth'
-import { useAuth } from './contexts/AuthContext'
-import { JokesPage, SetlistsPage, JokeFormPage, JokeViewPage, SetlistFormPage, SetlistViewPage } from './pages'
-import styles from './App.module.css'
-import shared from './styles/shared.module.css'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  Link,
+  useLocation,
+} from "react-router-dom";
+import { Auth } from "./components/Auth";
+import { useAuth } from "./contexts/AuthContext";
+import {
+  JokesPage,
+  SetlistsPage,
+  JokeFormPage,
+  JokeViewPage,
+  SetlistFormPage,
+  SetlistViewPage,
+  AuthCallbackPage,
+} from "./pages";
+import styles from "./App.module.css";
+import shared from "./styles/shared.module.css";
 
 function AppHeader() {
-  const { user, signOut } = useAuth()
-  const location = useLocation()
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login')
+  const { user, signOut } = useAuth();
+  const location = useLocation();
 
   if (!user) {
     return (
       <div className={styles.authWrapper}>
-        {authMode === 'login' ? (
-          <LoginForm onSwitchToSignUp={() => setAuthMode('signup')} />
-        ) : (
-          <SignUpForm onSwitchToLogin={() => setAuthMode('login')} />
-        )}
+        <Auth />
       </div>
-    )
+    );
   }
 
   return (
@@ -29,13 +38,17 @@ function AppHeader() {
       <nav className={styles.navigation}>
         <Link
           to="/jokes"
-          className={`${styles.navButton} ${location.pathname.startsWith('/jokes') ? styles.active : ''}`}
+          className={`${styles.navButton} ${
+            location.pathname.startsWith("/jokes") ? styles.active : ""
+          }`}
         >
           Jokes
         </Link>
         <Link
           to="/setlists"
-          className={`${styles.navButton} ${location.pathname.startsWith('/setlists') ? styles.active : ''}`}
+          className={`${styles.navButton} ${
+            location.pathname.startsWith("/setlists") ? styles.active : ""
+          }`}
         >
           Setlists
         </Link>
@@ -47,11 +60,11 @@ function AppHeader() {
         </button>
       </div>
     </header>
-  )
+  );
 }
 
 function AppContent() {
-  const { user, loading } = useAuth()
+  const { user, loading } = useAuth();
 
   // Show loading screen while auth is initializing
   if (loading) {
@@ -59,12 +72,12 @@ function AppContent() {
       <div className={styles.loading}>
         <h2>Loading...</h2>
       </div>
-    )
+    );
   }
 
   // Show auth screen if not logged in
   if (!user) {
-    return null // Auth is handled in AppHeader
+    return null; // Auth is handled in AppHeader
   }
 
   return (
@@ -79,10 +92,11 @@ function AppContent() {
         <Route path="/setlists/new" element={<SetlistFormPage />} />
         <Route path="/setlists/:id" element={<SetlistViewPage />} />
         <Route path="/setlists/:id/edit" element={<SetlistFormPage />} />
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
         <Route path="*" element={<Navigate to="/jokes" replace />} />
       </Routes>
     </main>
-  )
+  );
 }
 
 function App() {
@@ -93,7 +107,7 @@ function App() {
         <AppContent />
       </div>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
