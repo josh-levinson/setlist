@@ -7,7 +7,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seed": "bun run scripts/seed.ts",
+    "get-user-id": "bun run scripts/get-user-id.ts",
+    "create-test-user": "bun run scripts/create-test-user.ts",
+    "check-data": "bun run scripts/check-data.ts",
+    "seed-with-auth": "bun run scripts/seed-with-auth.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",

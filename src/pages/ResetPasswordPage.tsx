@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import styles from "./Pages.module.css";
 import shared from "../styles/shared.module.css";
@@ -10,22 +10,25 @@ export function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [hasValidParams, setHasValidParams] = useState(false);
+  const [hasValidSession, setHasValidSession] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
-    // Check if we have the required URL parameters
-    const urlParams = new URLSearchParams(location.search);
-    const token = urlParams.get("token");
-    const type = urlParams.get("type");
+    // Check if we have a valid session (user should be authenticated after verification)
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.user) {
+        console.log("Valid session found for user:", session.user.email);
+        setHasValidSession(true);
+      } else {
+        console.log("No valid session found");
+        setError("Invalid reset link. Please request a new password reset.");
+      }
+    };
 
-    if (token && type === "recovery") {
-      setHasValidParams(true);
-    } else {
-      setError("Invalid reset link. Please request a new password reset.");
-    }
-  }, [location]);
+    checkSession();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,36 +47,7 @@ export function ResetPasswordPage() {
     setError(null);
 
     try {
-      // Get the token from URL parameters
-      const urlParams = new URLSearchParams(location.search);
-      const token = urlParams.get("token");
-
-      if (!token) {
-        setError("Invalid reset token. Please request a new password reset.");
-        return;
-      }
-
-      // First, verify the recovery token
-      const { data: verifyData, error: verifyError } =
-        await supabase.auth.verifyOtp({
-          token_hash: token,
-          type: "recovery",
-        });
-
-      if (verifyError) {
-        console.error("Token verification error:", verifyError);
-        setError(
-          "Invalid or expired reset link. Please request a new password reset."
-        );
-        return;
-      }
-
-      if (!verifyData.user) {
-        setError("Invalid reset token. Please request a new password reset.");
-        return;
-      }
-
-      // Now update the password
+      // Update the password
       const { error } = await supabase.auth.updateUser({
         password: password,
       });
@@ -109,7 +83,7 @@ export function ResetPasswordPage() {
     );
   }
 
-  if (!hasValidParams && !error) {
+  if (!hasValidSession && !error) {
     return (
       <div className={styles.page}>
         <div className={styles.loading}>
@@ -120,7 +94,7 @@ export function ResetPasswordPage() {
     );
   }
 
-  if (error && !hasValidParams) {
+  if (error && !hasValidSession) {
     return (
       <div className={styles.page}>
         <div className={styles.error}>
