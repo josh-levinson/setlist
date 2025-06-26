@@ -10,43 +10,21 @@ export function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [isValidToken, setIsValidToken] = useState(false);
+  const [hasValidParams, setHasValidParams] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
-      try {
-        // Check if we have an access token in the URL hash
-        const hash = location.hash;
-        if (!hash || !hash.includes("access_token")) {
-          setError("Invalid reset link. Please request a new password reset.");
-          return;
-        }
+    // Check if we have the required URL parameters
+    const urlParams = new URLSearchParams(location.search);
+    const token = urlParams.get("token");
+    const type = urlParams.get("type");
 
-        // Get the current session to verify the token is valid
-        const { data, error } = await supabase.auth.getSession();
-
-        if (error) {
-          setError(
-            "Invalid or expired reset link. Please request a new password reset."
-          );
-          return;
-        }
-
-        if (data.session) {
-          setIsValidToken(true);
-        } else {
-          setError(
-            "Invalid or expired reset link. Please request a new password reset."
-          );
-        }
-      } catch {
-        setError("An unexpected error occurred. Please try again.");
-      }
-    };
-
-    handleAuthCallback();
+    if (token && type === "recovery") {
+      setHasValidParams(true);
+    } else {
+      setError("Invalid reset link. Please request a new password reset.");
+    }
   }, [location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,6 +44,36 @@ export function ResetPasswordPage() {
     setError(null);
 
     try {
+      // Get the token from URL parameters
+      const urlParams = new URLSearchParams(location.search);
+      const token = urlParams.get("token");
+
+      if (!token) {
+        setError("Invalid reset token. Please request a new password reset.");
+        return;
+      }
+
+      // First, verify the recovery token
+      const { data: verifyData, error: verifyError } =
+        await supabase.auth.verifyOtp({
+          token_hash: token,
+          type: "recovery",
+        });
+
+      if (verifyError) {
+        console.error("Token verification error:", verifyError);
+        setError(
+          "Invalid or expired reset link. Please request a new password reset."
+        );
+        return;
+      }
+
+      if (!verifyData.user) {
+        setError("Invalid reset token. Please request a new password reset.");
+        return;
+      }
+
+      // Now update the password
       const { error } = await supabase.auth.updateUser({
         password: password,
       });
@@ -76,7 +84,8 @@ export function ResetPasswordPage() {
       }
 
       setIsSuccess(true);
-    } catch {
+    } catch (err) {
+      console.error("Password update error:", err);
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
@@ -100,7 +109,7 @@ export function ResetPasswordPage() {
     );
   }
 
-  if (!isValidToken && !error) {
+  if (!hasValidParams && !error) {
     return (
       <div className={styles.page}>
         <div className={styles.loading}>
@@ -111,7 +120,7 @@ export function ResetPasswordPage() {
     );
   }
 
-  if (error && !isValidToken) {
+  if (error && !hasValidParams) {
     return (
       <div className={styles.page}>
         <div className={styles.error}>

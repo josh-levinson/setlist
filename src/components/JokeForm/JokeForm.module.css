@@ -1,6 +1,6 @@
 /* Joke Form Component Styles */
 .form {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-surface);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 2rem;
@@ -11,7 +11,7 @@
 
 .title {
   margin-bottom: 2rem;
-  color: #2d3748;
+  color: var(--color-text-primary);
   font-size: 1.5rem;
 }
 
@@ -23,7 +23,7 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--color-text-primary);
   font-size: 0.9rem;
 }
 
@@ -31,7 +31,7 @@
 .textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   font-size: 0.9rem;
   transition: border-color 0.2s ease;
@@ -40,16 +40,16 @@
 .input:focus,
 .textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primary);
 }
 
 .input.error,
 .textarea.error {
-  border-color: #e53e3e;
+  border-color: var(--color-error);
 }
 
 .errorMessage {
-  color: #e53e3e;
+  color: var(--color-error);
   font-size: 0.8rem;
   margin-top: 0.25rem;
   display: block;
@@ -69,8 +69,8 @@
 }
 
 .cancelBtn {
-  background: #e2e8f0;
-  color: #4a5568;
+  background: var(--color-accent-light);
+  color: var(--color-text-secondary);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -81,12 +81,17 @@
 }
 
 .cancelBtn:hover {
-  background: #cbd5e0;
+  background: var(--color-accent);
+  color: white;
   transform: translateY(-1px);
 }
 
 .submitBtn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 100%
+  );
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -99,7 +104,7 @@
 
 .submitBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(74, 144, 184, 0.4);
 }
 
 /* Responsive design */
@@ -107,12 +112,12 @@
   .form {
     padding: 1.5rem;
   }
-  
+
   .formRow {
     grid-template-columns: 1fr;
   }
-  
+
   .formActions {
     flex-direction: column;
   }
-} 
+}

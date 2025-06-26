@@ -2,7 +2,11 @@
 
 /* Button Styles */
 .btnPrimary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 100%
+  );
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -15,12 +19,12 @@
 
 .btnPrimary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(74, 144, 184, 0.4);
 }
 
 .btnSecondary {
-  background: #e2e8f0;
-  color: #4a5568;
+  background: var(--color-accent-light);
+  color: var(--color-text-secondary);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -31,7 +35,8 @@
 }
 
 .btnSecondary:hover {
-  background: #cbd5e0;
+  background: var(--color-accent);
+  color: white;
   transform: translateY(-1px);
 }
 
@@ -41,8 +46,8 @@
 }
 
 .btnBack {
-  background: #e2e8f0;
-  color: #4a5568;
+  background: var(--color-accent-light);
+  color: var(--color-text-secondary);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -52,12 +57,13 @@
 }
 
 .btnBack:hover {
-  background: #cbd5e0;
+  background: var(--color-accent);
+  color: white;
 }
 
 /* Container Styles */
 .container {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-surface);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 2rem;
@@ -67,7 +73,7 @@
 /* Input Styles */
 .input {
   padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   font-size: 0.9rem;
   transition: border-color 0.2s ease;
@@ -75,7 +81,7 @@
 
 .input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primary);
 }
 
 /* Tag Styles */
@@ -102,4 +108,4 @@
   .container {
     padding: 1.5rem;
   }
-} 
+}

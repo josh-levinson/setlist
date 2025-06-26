@@ -6,14 +6,14 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-background);
   min-height: 100vh;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 /* App container */
@@ -25,7 +25,7 @@ body {
 
 /* Header */
 .app-header {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-surface);
   backdrop-filter: blur(10px);
   padding: 1rem 2rem;
   display: flex;
@@ -40,7 +40,7 @@ body {
 .app-header h1 {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #2d3748;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -54,7 +54,8 @@ body {
 }
 
 /* Buttons */
-.btn-primary, .btn-secondary {
+.btn-primary,
+.btn-secondary {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -65,22 +66,27 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 100%
+  );
   color: white;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(74, 144, 184, 0.4);
 }
 
 .btn-secondary {
-  background: #e2e8f0;
-  color: #4a5568;
+  background: var(--color-accent-light);
+  color: var(--color-text-secondary);
 }
 
 .btn-secondary:hover {
-  background: #cbd5e0;
+  background: var(--color-accent);
+  color: white;
   transform: translateY(-1px);
 }
 
@@ -94,7 +100,8 @@ body {
   font-size: 0.8rem;
 }
 
-.btn-edit, .btn-delete {
+.btn-edit,
+.btn-delete {
   background: none;
   border: none;
   font-size: 1.2rem;
@@ -105,18 +112,18 @@ body {
 }
 
 .btn-edit:hover {
-  background: #e6fffa;
+  background: rgba(135, 169, 107, 0.1);
   transform: scale(1.1);
 }
 
 .btn-delete:hover {
-  background: #fed7d7;
+  background: rgba(239, 68, 68, 0.1);
   transform: scale(1.1);
 }
 
 .btn-back {
-  background: #e2e8f0;
-  color: #4a5568;
+  background: var(--color-accent-light);
+  color: var(--color-text-secondary);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -126,12 +133,13 @@ body {
 }
 
 .btn-back:hover {
-  background: #cbd5e0;
+  background: var(--color-accent);
+  color: white;
 }
 
 /* Joke List */
 .joke-list {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-surface);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 2rem;
@@ -149,7 +157,7 @@ body {
 
 .joke-list-header h2 {
   font-size: 1.5rem;
-  color: #2d3748;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -157,7 +165,7 @@ body {
   display: flex;
   gap: 1.5rem;
   font-size: 0.9rem;
-  color: #718096;
+  color: var(--color-text-muted);
 }
 
 .joke-list-controls {
@@ -171,7 +179,7 @@ body {
 
 .search-input {
   padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   font-size: 0.9rem;
   width: 300px;
@@ -180,7 +188,7 @@ body {
 
 .search-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primary);
 }
 
 .sort-controls {
@@ -191,12 +199,12 @@ body {
 
 .sort-controls span {
   font-size: 0.9rem;
-  color: #718096;
+  color: var(--color-text-muted);
 }
 
 .sort-btn {
-  background: #f7fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
@@ -205,13 +213,13 @@ body {
 }
 
 .sort-btn:hover {
-  background: #edf2f7;
+  background: var(--color-accent-light);
 }
 
 .sort-btn.active {
-  background: #667eea;
+  background: var(--color-primary);
   color: white;
-  border-color: #667eea;
+  border-color: var(--color-primary);
 }
 
 /* Active filters */
@@ -225,7 +233,7 @@ body {
 
 .active-filters span {
   font-size: 0.9rem;
-  color: #718096;
+  color: var(--color-text-muted);
 }
 
 .filter-tag {
@@ -233,10 +241,10 @@ body {
   align-items: center;
   gap: 0.5rem;
   padding: 0.25rem 0.75rem;
-  background: #e2e8f0;
+  background: var(--color-accent-light);
   border-radius: 20px;
   font-size: 0.8rem;
-  color: #4a5568;
+  color: var(--color-text-secondary);
 }
 
 .clear-filter {
@@ -244,18 +252,18 @@ body {
   border: none;
   cursor: pointer;
   font-size: 1rem;
-  color: #718096;
+  color: var(--color-text-muted);
   padding: 0;
   margin-left: 0.25rem;
 }
 
 .clear-filter:hover {
-  color: #e53e3e;
+  color: var(--color-error);
 }
 
 .clear-all-filters {
-  background: #fed7d7;
-  color: #c53030;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-error);
   border: none;
   padding: 0.25rem 0.75rem;
   border-radius: 6px;
@@ -265,7 +273,7 @@ body {
 }
 
 .clear-all-filters:hover {
-  background: #feb2b2;
+  background: rgba(239, 68, 68, 0.2);
 }
 
 /* Jokes Grid */
@@ -283,7 +291,7 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 }
 
 .joke-card:hover {
@@ -301,7 +309,7 @@ body {
 .joke-name {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--color-text-primary);
   margin: 0;
   flex: 1;
   line-height: 1.4;
@@ -314,7 +322,7 @@ body {
 
 .joke-content {
   margin-bottom: 1rem;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
@@ -366,10 +374,10 @@ body {
 
 /* Tag Selector */
 .tag-selector {
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   padding: 1rem;
-  background: #f7fafc;
+  background: var(--color-background);
 }
 
 .selected-tags {
@@ -389,12 +397,12 @@ body {
 
 .available-tags .label {
   font-size: 0.9rem;
-  color: #718096;
+  color: var(--color-text-muted);
   font-weight: 500;
 }
 
 .create-tag-section {
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
   padding-top: 1rem;
 }
 
@@ -407,7 +415,7 @@ body {
 
 .tag-name-input {
   padding: 0.5rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 0.9rem;
   min-width: 150px;
@@ -416,7 +424,7 @@ body {
 .tag-color-input {
   width: 40px;
   height: 40px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
 }
@@ -427,10 +435,11 @@ body {
   align-items: center;
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 }
 
-.joke-rating, .joke-duration {
+.joke-rating,
+.joke-duration {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -438,13 +447,14 @@ body {
 
 .label {
   font-size: 0.8rem;
-  color: #718096;
+  color: var(--color-text-muted);
   font-weight: 500;
 }
 
-.rating-value, .duration-value {
+.rating-value,
+.duration-value {
   font-weight: 600;
-  color: #2d3748;
+  color: var(--color-text-primary);
 }
 
 .rating-stars {
@@ -453,17 +463,17 @@ body {
 }
 
 .star {
-  color: #e2e8f0;
+  color: var(--color-border);
   font-size: 0.8rem;
 }
 
 .star.filled {
-  color: #f6ad55;
+  color: var(--color-warning);
 }
 
 /* Joke Form */
 .joke-form {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-surface);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 2rem;
@@ -474,7 +484,7 @@ body {
 
 .joke-form h2 {
   margin-bottom: 2rem;
-  color: #2d3748;
+  color: var(--color-text-primary);
   font-size: 1.5rem;
 }
 
@@ -486,7 +496,7 @@ body {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--color-text-primary);
   font-size: 0.9rem;
 }
 
@@ -494,7 +504,7 @@ body {
 .form-group textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   font-size: 0.9rem;
   transition: border-color 0.2s ease;
@@ -503,15 +513,15 @@ body {
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primary);
 }
 
 .form-group input.error {
-  border-color: #e53e3e;
+  border-color: var(--color-error);
 }
 
 .error-message {
-  color: #e53e3e;
+  color: var(--color-error);
   font-size: 0.8rem;
   margin-top: 0.25rem;
   display: block;
@@ -532,7 +542,7 @@ body {
 
 /* Joke Viewer */
 .joke-viewer {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-surface);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 2rem;
@@ -550,7 +560,7 @@ body {
 
 .joke-title {
   font-size: 2rem;
-  color: #2d3748;
+  color: var(--color-text-primary);
   margin-bottom: 1.5rem;
 }
 
@@ -569,7 +579,7 @@ body {
 
 .meta-label {
   font-weight: 600;
-  color: #718096;
+  color: var(--color-text-muted);
 }
 
 .rating-display {
@@ -584,7 +594,7 @@ body {
 
 .joke-tags-section h3 {
   margin-bottom: 1rem;
-  color: #2d3748;
+  color: var(--color-text-primary);
   font-size: 1.1rem;
 }
 
@@ -594,16 +604,16 @@ body {
 
 .joke-content-section h3 {
   margin-bottom: 1rem;
-  color: #2d3748;
+  color: var(--color-text-primary);
   font-size: 1.1rem;
 }
 
 .joke-content-text {
-  background: #f7fafc;
+  background: var(--color-background);
   padding: 1.5rem;
   border-radius: 8px;
   line-height: 1.6;
-  color: #4a5568;
+  color: var(--color-text-secondary);
 }
 
 .joke-content-text p {
@@ -624,7 +634,7 @@ body {
 .no-jokes {
   text-align: center;
   padding: 3rem;
-  color: #718096;
+  color: var(--color-text-muted);
   font-size: 1.1rem;
 }
 
@@ -635,34 +645,34 @@ body {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .app-main {
     padding: 1rem;
   }
-  
+
   .joke-list-header,
   .joke-list-controls {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .search-input {
     width: 100%;
   }
-  
+
   .jokes-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .joke-meta-info {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .joke-viewer-header {
     flex-direction: column;
     gap: 1rem;

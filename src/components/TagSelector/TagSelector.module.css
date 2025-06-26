@@ -1,10 +1,10 @@
 /* Tag Selector Component Styles */
 
 .selector {
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   padding: 1rem;
-  background: #f7fafc;
+  background: var(--color-background);
 }
 
 .selectedTags {
@@ -28,7 +28,7 @@
 
 .label {
   font-size: 0.9rem;
-  color: #718096;
+  color: var(--color-text-muted);
   font-weight: 500;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .createSection {
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
   padding-top: 1rem;
 }
 
@@ -54,7 +54,7 @@
 
 .tagNameInput {
   padding: 0.5rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 0.9rem;
   min-width: 150px;
@@ -63,7 +63,7 @@
 .tagColorInput {
   width: 40px;
   height: 40px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
 }
@@ -74,8 +74,8 @@
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .tagNameInput {
     min-width: auto;
   }
-} 
+}

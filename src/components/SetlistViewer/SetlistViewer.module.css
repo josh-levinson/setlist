@@ -11,13 +11,13 @@
   align-items: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .backButton {
   background: none;
   border: none;
-  color: #6b7280;
+  color: var(--color-text-muted);
   font-size: 1rem;
   cursor: pointer;
   padding: 8px 0;
@@ -25,7 +25,7 @@
 }
 
 .backButton:hover {
-  color: #374151;
+  color: var(--color-text-primary);
 }
 
 .headerActions {
@@ -41,7 +41,7 @@
 .setlistName {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--color-text-primary);
   margin: 0 0 20px 0;
 }
 
@@ -60,7 +60,7 @@
 
 .statLabel {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -68,7 +68,7 @@
 .statValue {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-text-primary);
 }
 
 .jokesSection {
@@ -78,7 +78,7 @@
 .sectionTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-text-primary);
   margin: 0 0 20px 0;
   text-align: center;
 }
@@ -86,13 +86,13 @@
 .emptyState {
   text-align: center;
   padding: 40px 20px;
-  background: #f9fafb;
+  background: var(--color-background);
   border-radius: 12px;
-  border: 2px dashed #d1d5db;
+  border: 2px dashed var(--color-border);
 }
 
 .emptyState p {
-  color: #6b7280;
+  color: var(--color-text-muted);
   margin: 0;
 }
 
@@ -106,7 +106,7 @@
   display: flex;
   gap: 16px;
   background: white;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -118,7 +118,7 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: #3b82f6;
+  background: var(--color-primary);
   color: white;
   border-radius: 50%;
   font-weight: 600;
@@ -140,7 +140,7 @@
 .jokeName {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -151,16 +151,16 @@
 }
 
 .rating {
-  color: #f59e0b;
+  color: var(--color-warning);
   font-weight: 500;
 }
 
 .duration {
-  color: #6b7280;
+  color: var(--color-text-muted);
 }
 
 .jokeText {
-  color: #4b5563;
+  color: var(--color-text-secondary);
   line-height: 1.6;
   margin: 0 0 12px 0;
 }
@@ -180,8 +180,8 @@
 }
 
 .summary {
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -198,7 +198,7 @@
 
 .summaryLabel {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -206,7 +206,7 @@
 .summaryValue {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-text-primary);
 }
 
 @media (max-width: 768px) {
@@ -236,4 +236,4 @@
     flex-direction: column;
     gap: 16px;
   }
-} 
+}

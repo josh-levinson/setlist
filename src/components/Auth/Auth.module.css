@@ -12,13 +12,13 @@
   font-size: 1.875rem;
   font-weight: 700;
   text-align: center;
-  color: #1f2937;
+  color: var(--color-text-primary);
 }
 
 .subtitle {
   margin: 0 0 2rem 0;
   text-align: center;
-  color: #6b7280;
+  color: var(--color-text-muted);
   font-size: 0.875rem;
 }
 
@@ -26,10 +26,10 @@
   text-align: center;
   margin: 1.5rem 0;
   padding: 1rem;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 8px;
-  color: #0c4a6e;
+  color: var(--color-success);
 }
 
 .successMessage p {
@@ -39,7 +39,7 @@
 }
 
 .successMessage strong {
-  color: #0369a1;
+  color: var(--color-success);
 }
 
 .form {
@@ -56,13 +56,13 @@
 
 .formGroup label {
   font-weight: 500;
-  color: #374151;
+  color: var(--color-text-primary);
   font-size: 0.875rem;
 }
 
 .input {
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 1rem;
   transition: border-color 0.2s;
@@ -70,8 +70,8 @@
 
 .input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 144, 184, 0.1);
 }
 
 .passwordLinks {
@@ -91,18 +91,18 @@
 .divider::after {
   content: "";
   flex: 1;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .divider span {
   padding: 0 1rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
   font-size: 0.875rem;
   background: white;
 }
 
 .error {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }
@@ -114,14 +114,14 @@
 
 .switch p {
   margin: 0;
-  color: #6b7280;
+  color: var(--color-text-muted);
   font-size: 0.875rem;
 }
 
 .linkButton {
   background: none;
   border: none;
-  color: #3b82f6;
+  color: var(--color-primary);
   text-decoration: underline;
   cursor: pointer;
   font-size: 0.875rem;
@@ -129,5 +129,5 @@
 }
 
 .linkButton:hover {
-  color: #2563eb;
+  color: var(--color-primary-dark);
 }
