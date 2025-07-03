@@ -83,7 +83,7 @@
 
 .stat {
   font-size: 0.9rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   background: var(--color-accent-light);
   padding: 4px 8px;
   border-radius: 6px;

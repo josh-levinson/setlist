@@ -97,8 +97,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const resetPassword = async (email: string) => {
     try {
       setError(null);
+
+      // Use different redirect URLs based on environment
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const redirectUrl = isLocalhost
+        ? `${window.location.origin}/auth/callback?next=/auth/reset-password`
+        : `${window.location.origin}/auth/callback?next=/auth/reset-password`;
+
+      console.log('Reset password redirect URL:', redirectUrl);
+
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.protocol}//${window.location.host}/auth/callback`,
+        redirectTo: redirectUrl,
       });
       if (error) throw error;
     } catch (err) {

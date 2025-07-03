@@ -6,14 +6,15 @@ This document explains how the password reset functionality works in the Setlist
 
 1. **Request Reset**: Users can click "Forgot Password?" on the login screen to request a password reset
 2. **Email Sent**: The app sends a password reset email via Supabase Auth
-3. **Click Link**: Users click the link in their email which contains an access token
-4. **Reset Password**: Users are taken to `/auth/reset-password` where they can enter a new password
-5. **Success**: After successful password update, users are redirected to the main app
+3. **Click Link**: Users click the link in their email which contains a recovery token
+4. **Token Verification**: The recovery token is verified and the user is automatically signed in
+5. **Reset Password**: Users are taken to `/auth/reset-password` where they can enter a new password
+6. **Success**: After successful password update, users are redirected to sign in with their new password
 
 ## Routes
 
 - `/auth/reset-password` - The page where users can enter their new password
-- The reset link in emails points to: `https://your-domain.com/auth/reset-password#access_token=...`
+- The reset link in emails points to: `https://your-domain.com/auth/callback?token=...&type=recovery`
 
 ## Components
 
@@ -23,10 +24,18 @@ This document explains how the password reset functionality works in the Setlist
 
 ## Security
 
-- Access tokens are validated before allowing password changes
+- Recovery tokens are validated before allowing password changes
 - Passwords must be at least 6 characters long
 - Invalid or expired tokens show appropriate error messages
-- Users are automatically signed in after successful password reset
+- Users are automatically signed in after successful token verification
+- After password reset, users are redirected to sign in with their new password
+
+## Flow Details
+
+1. **Token Verification**: When users click the reset link, the recovery token is verified using `supabase.auth.verifyOtp()`
+2. **Automatic Sign-in**: Upon successful verification, the user is automatically signed in
+3. **Password Update**: The user can then update their password using `supabase.auth.updateUser()`
+4. **Redirect to Login**: After successful password update, users are redirected to the login page to sign in with their new password
 
 ## Deployment Configuration
 
@@ -57,7 +66,7 @@ To test the password reset flow:
 4. Check your email for the reset link
 5. Click the link to go to the reset password page
 6. Enter a new password and confirm it
-7. You should be redirected to the main app
+7. You should be redirected to the login page to sign in with your new password
 
 ## Troubleshooting
 
@@ -85,13 +94,13 @@ If the reset link doesn't work:
 To test locally:
 
 1. Run `bun run dev`
-2. Navigate to `http://localhost:5173/auth/reset-password#access_token=test`
-3. The page should load without errors
+2. Navigate to `http://localhost:5173/auth/reset-password`
+3. The page should load without errors (if you have a valid session)
 
 ## Route Structure
 
 The app now properly handles auth routes outside of the authenticated section:
 
-- `/auth/callback` - Handles OAuth callbacks
-- `/auth/reset-password` - Handles password reset
+- `/auth/callback` - Handles OAuth callbacks and recovery token verification
+- `/auth/reset-password` - Handles password reset (requires authentication)
 - All other routes require authentication

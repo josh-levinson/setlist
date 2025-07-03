@@ -50,17 +50,15 @@ function AppHeader() {
       <nav className={styles.navigation}>
         <Link
           to="/jokes"
-          className={`${styles.navButton} ${
-            location.pathname.startsWith("/jokes") ? styles.active : ""
-          }`}
+          className={`${styles.navButton} ${location.pathname.startsWith("/jokes") ? styles.active : ""
+            }`}
         >
           Jokes
         </Link>
         <Link
           to="/setlists"
-          className={`${styles.navButton} ${
-            location.pathname.startsWith("/setlists") ? styles.active : ""
-          }`}
+          className={`${styles.navButton} ${location.pathname.startsWith("/setlists") ? styles.active : ""
+            }`}
         >
           Setlists
         </Link>
@@ -77,6 +75,9 @@ function AppHeader() {
 
 function AppContent() {
   const { user, loading } = useAuth();
+  const location = useLocation();
+
+  console.log("AppContent - user:", user ? user.email : "no user", "loading:", loading);
 
   // Show loading screen while auth is initializing
   if (loading) {
@@ -85,6 +86,12 @@ function AppContent() {
         <h2>Loading...</h2>
       </div>
     );
+  }
+
+  // Check if user just completed password reset (they're authenticated but on the root path)
+  if (user && location.pathname === "/") {
+    console.log("User authenticated on root path, redirecting to reset password");
+    return <Navigate to="/auth/reset-password" replace />;
   }
 
   return (

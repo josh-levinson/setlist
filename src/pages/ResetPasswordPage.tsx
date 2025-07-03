@@ -10,20 +10,25 @@ export function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [hasValidSession, setHasValidSession] = useState(false);
+  const [isValidating, setIsValidating] = useState(true);
   const navigate = useNavigate();
 
+  console.log("ResetPasswordPage rendered");
+
   useEffect(() => {
-    // Check if we have a valid session (user should be authenticated after verification)
+    console.log("ResetPasswordPage useEffect running");
+    // Check if we have a valid session (user should be authenticated after recovery token verification)
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      
+
+      console.log("Session check result:", session ? "Has session" : "No session");
       if (session?.user) {
         console.log("Valid session found for user:", session.user.email);
-        setHasValidSession(true);
+        setIsValidating(false);
       } else {
         console.log("No valid session found");
         setError("Invalid reset link. Please request a new password reset.");
+        setIsValidating(false);
       }
     };
 
@@ -47,7 +52,7 @@ export function ResetPasswordPage() {
     setError(null);
 
     try {
-      // Update the password
+      // Update the password for the authenticated user
       const { error } = await supabase.auth.updateUser({
         password: password,
       });
@@ -56,6 +61,11 @@ export function ResetPasswordPage() {
         setError(error.message);
         return;
       }
+
+      console.log("Password updated successfully");
+
+      // Sign the user out so they can sign in with their new password
+      await supabase.auth.signOut();
 
       setIsSuccess(true);
     } catch (err) {
@@ -72,18 +82,19 @@ export function ResetPasswordPage() {
         <div className={styles.success}>
           <h2>Password Reset Successful!</h2>
           <p>Your password has been updated successfully.</p>
+          <p>You have been signed out and can now sign in with your new password.</p>
           <button
-            onClick={() => navigate("/jokes")}
+            onClick={() => navigate("/")}
             className={shared.btnPrimary}
           >
-            Continue to App
+            Sign In with New Password
           </button>
         </div>
       </div>
     );
   }
 
-  if (!hasValidSession && !error) {
+  if (isValidating) {
     return (
       <div className={styles.page}>
         <div className={styles.loading}>
@@ -94,7 +105,7 @@ export function ResetPasswordPage() {
     );
   }
 
-  if (error && !hasValidSession) {
+  if (error) {
     return (
       <div className={styles.page}>
         <div className={styles.error}>

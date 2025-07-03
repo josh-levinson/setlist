@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import type { Joke, Tag } from "../../types";
-import { JokeCard } from "../JokeCard";
 import styles from "./JokeList.module.css";
 import shared from "../../styles/shared.module.css";
 
@@ -13,8 +12,10 @@ interface JokeListProps {
   onTagClick?: (tagId: string) => void;
 }
 
-type SortOption = "name" | "rating" | "duration";
+type SortOption = "name" | "rating" | "duration" | "created_at";
 type SortDirection = "asc" | "desc";
+
+const ITEMS_PER_PAGE = 10;
 
 export function JokeList({
   jokes,
@@ -26,9 +27,8 @@ export function JokeList({
   const [sortBy, setSortBy] = useState<SortOption>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTagFilter, setSelectedTagFilter] = useState<string | null>(
-    null
-  );
+  const [selectedTagFilter, setSelectedTagFilter] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredAndSortedJokes = useMemo(() => {
     const filtered = jokes.filter((joke) => {
@@ -62,6 +62,10 @@ export function JokeList({
           aValue = a.duration;
           bValue = b.duration;
           break;
+        case "created_at":
+          aValue = new Date(a.created_at).getTime();
+          bValue = new Date(b.created_at).getTime();
+          break;
         default:
           aValue = a.name.toLowerCase();
           bValue = b.name.toLowerCase();
@@ -74,6 +78,17 @@ export function JokeList({
 
     return filtered;
   }, [jokes, sortBy, sortDirection, searchTerm, selectedTagFilter]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAndSortedJokes.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedJokes = filteredAndSortedJokes.slice(startIndex, endIndex);
+
+  // Reset to first page when filters change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedTagFilter]);
 
   const totalDuration = jokes.reduce((sum, joke) => sum + joke.duration, 0);
   const averageRating =
@@ -96,6 +111,17 @@ export function JokeList({
   };
 
   const selectedTag = availableTags.find((tag) => tag.id === selectedTagFilter);
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  const getTagNames = (tagIds: string[]) => {
+    return tagIds
+      .map((id) => availableTags.find((tag) => tag.id === id)?.name)
+      .filter(Boolean)
+      .join(", ");
+  };
 
   return (
     <div className={`${styles.list} ${shared.container}`}>
@@ -124,29 +150,34 @@ export function JokeList({
           <span className={styles.sortLabel}>Sort by:</span>
           <button
             onClick={() => handleSort("name")}
-            className={`${styles.sortBtn} ${
-              sortBy === "name" ? styles.active : ""
-            }`}
+            className={`${styles.sortBtn} ${sortBy === "name" ? styles.active : ""
+              }`}
           >
             Name {sortBy === "name" && (sortDirection === "asc" ? "↑" : "↓")}
           </button>
           <button
             onClick={() => handleSort("rating")}
-            className={`${styles.sortBtn} ${
-              sortBy === "rating" ? styles.active : ""
-            }`}
+            className={`${styles.sortBtn} ${sortBy === "rating" ? styles.active : ""
+              }`}
           >
             Rating{" "}
             {sortBy === "rating" && (sortDirection === "asc" ? "↑" : "↓")}
           </button>
           <button
             onClick={() => handleSort("duration")}
-            className={`${styles.sortBtn} ${
-              sortBy === "duration" ? styles.active : ""
-            }`}
+            className={`${styles.sortBtn} ${sortBy === "duration" ? styles.active : ""
+              }`}
           >
             Duration{" "}
             {sortBy === "duration" && (sortDirection === "asc" ? "↑" : "↓")}
+          </button>
+          <button
+            onClick={() => handleSort("created_at")}
+            className={`${styles.sortBtn} ${sortBy === "created_at" ? styles.active : ""
+              }`}
+          >
+            Date{" "}
+            {sortBy === "created_at" && (sortDirection === "asc" ? "↑" : "↓")}
           </button>
         </div>
       </div>
@@ -192,18 +223,119 @@ export function JokeList({
             : "No jokes yet. Create your first joke!"}
         </div>
       ) : (
-        <div className={styles.grid}>
-          {filteredAndSortedJokes.map((joke) => (
-            <JokeCard
-              key={joke.id}
-              joke={joke}
-              availableTags={availableTags}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              onClick={onView}
-            />
-          ))}
-        </div>
+        <>
+          <div className={styles.tableContainer}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Rating</th>
+                  <th>Duration</th>
+                  <th>Tags</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedJokes.map((joke) => (
+                  <tr key={joke.id} className={styles.tableRow}>
+                    <td>
+                      <button
+                        onClick={() => onView(joke)}
+                        className={styles.jokeName}
+                      >
+                        {joke.name}
+                      </button>
+                    </td>
+                    <td className={styles.rating}>
+                      <span className={styles.ratingValue}>{joke.rating}/10</span>
+                    </td>
+                    <td className={styles.duration}>
+                      {joke.duration} min
+                    </td>
+                    <td className={styles.tags}>
+                      {joke.tags.length > 0 ? (
+                        <div className={styles.tagList}>
+                          {joke.tags.slice(0, 2).map((tagId) => {
+                            const tag = availableTags.find((t) => t.id === tagId);
+                            return tag ? (
+                              <span
+                                key={tagId}
+                                className={styles.tag}
+                                style={{ backgroundColor: tag.color }}
+                              >
+                                {tag.name}
+                              </span>
+                            ) : null;
+                          })}
+                          {joke.tags.length > 2 && (
+                            <span className={styles.moreTags}>
+                              +{joke.tags.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className={styles.noTags}>No tags</span>
+                      )}
+                    </td>
+                    <td className={styles.date}>
+                      {formatDate(joke.created_at)}
+                    </td>
+                    <td className={styles.actions}>
+                      <button
+                        onClick={() => onEdit(joke)}
+                        className={styles.actionBtn}
+                        title="Edit"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => onDelete(joke.id)}
+                        className={styles.actionBtn}
+                        title="Delete"
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {totalPages > 1 && (
+            <div className={styles.pagination}>
+              <button
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                className={styles.pageBtn}
+              >
+                Previous
+              </button>
+
+              <div className={styles.pageNumbers}>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`${styles.pageBtn} ${page === currentPage ? styles.activePage : ""
+                      }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                className={styles.pageBtn}
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

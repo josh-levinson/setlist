@@ -16,16 +16,20 @@ export function AuthCallbackPage() {
         console.log("Auth callback - URL:", window.location.href);
         console.log("Search params:", location.search);
         console.log("Hash:", location.hash);
+        console.log("Current pathname:", location.pathname);
 
         // Check if this is a password reset verification
         const urlParams = new URLSearchParams(location.search);
         const token = urlParams.get("token");
         const type = urlParams.get("type");
 
+        console.log("Token:", token);
+        console.log("Type:", type);
+
         if (token && type === "recovery") {
           console.log("Processing password reset verification...");
-          
-          // Verify the recovery token
+
+          // Verify the recovery token - this will sign the user in
           const { data, error } = await supabase.auth.verifyOtp({
             token_hash: token,
             type: "recovery",
@@ -44,16 +48,22 @@ export function AuthCallbackPage() {
             return;
           }
 
-          console.log("Token verified successfully, redirecting to reset password page");
-          
-          // Redirect to reset password page with the verified session
-          navigate("/auth/reset-password", { replace: true });
+          console.log("Token verified successfully, user signed in:", data.user.email);
+          console.log("About to redirect to reset password page...");
+
+          // Check if there's a next parameter for redirect
+          const next = urlParams.get("next");
+          const redirectPath = next || "/auth/reset-password";
+
+          // Redirect to reset password page - user is now signed in
+          navigate(redirectPath, { replace: true });
           return;
         }
 
         // Handle regular OAuth callback
+        console.log("Handling regular OAuth callback...");
         const { data, error } = await supabase.auth.getSession();
-        
+
         if (error) {
           console.error("Auth callback error:", error);
           setError("Authentication failed. Please try again.");

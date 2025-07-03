@@ -1,4 +1,23 @@
 import React, { useState } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import {
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import type { Setlist, Joke, Tag } from "../../types";
 import styles from "./SetlistForm.module.css";
 import shared from "../../styles/shared.module.css";
@@ -12,6 +31,82 @@ interface SetlistFormProps {
   ) => void;
   onCancel: () => void;
 }
+
+// Sortable joke item component
+const SortableJokeItem: React.FC<{
+  joke: Joke;
+  index: number;
+  onRemove: (jokeId: string) => void;
+  availableTags: Tag[];
+}> = ({ joke, index, onRemove, availableTags }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: joke.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours > 0) {
+      return `${hours}h ${mins}m`;
+    }
+    return `${mins}m`;
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={styles.sortableJokeItem}
+      {...attributes}
+      {...listeners}
+    >
+      <div className={styles.dragHandle}>⋮⋮</div>
+      <div className={styles.jokeNumber}>{index + 1}</div>
+      <div className={styles.jokeInfo}>
+        <span className={styles.jokeName}>{joke.name}</span>
+        <div className={styles.jokeDetails}>
+          <span className={styles.rating}>★ {joke.rating}</span>
+          <span className={styles.duration}>
+            {formatDuration(joke.duration)}
+          </span>
+        </div>
+      </div>
+      <div className={styles.jokeTags}>
+        {joke.tags.map((tagId) => {
+          const tag = availableTags.find((t) => t.id === tagId);
+          return tag ? (
+            <span
+              key={tagId}
+              className={styles.tag}
+              style={{ backgroundColor: tag.color }}
+            >
+              {tag.name}
+            </span>
+          ) : null;
+        })}
+      </div>
+      <button
+        type="button"
+        onClick={() => onRemove(joke.id)}
+        className={styles.removeButton}
+        title="Remove joke"
+      >
+        ×
+      </button>
+    </div>
+  );
+};
 
 export const SetlistForm: React.FC<SetlistFormProps> = ({
   setlist,
@@ -28,10 +123,18 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
 
   const isEditing = !!setlist;
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const filteredJokes = availableJokes.filter(
     (joke) =>
-      joke.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      joke.content?.toLowerCase().includes(searchTerm.toLowerCase())
+      !selectedJokeIds.includes(joke.id) &&
+      (joke.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        joke.content?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const selectedJokes = availableJokes.filter((joke) =>
@@ -67,36 +170,25 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
     onSubmit(setlistData);
   };
 
-  const toggleJokeSelection = (jokeId: string) => {
-    setSelectedJokeIds((prev) =>
-      prev.includes(jokeId)
-        ? prev.filter((id) => id !== jokeId)
-        : [...prev, jokeId]
-    );
-  };
-
-  const moveJokeUp = (index: number) => {
-    if (index === 0) return;
-    const newSelectedJokeIds = [...selectedJokeIds];
-    [newSelectedJokeIds[index], newSelectedJokeIds[index - 1]] = [
-      newSelectedJokeIds[index - 1],
-      newSelectedJokeIds[index],
-    ];
-    setSelectedJokeIds(newSelectedJokeIds);
-  };
-
-  const moveJokeDown = (index: number) => {
-    if (index === selectedJokeIds.length - 1) return;
-    const newSelectedJokeIds = [...selectedJokeIds];
-    [newSelectedJokeIds[index], newSelectedJokeIds[index + 1]] = [
-      newSelectedJokeIds[index + 1],
-      newSelectedJokeIds[index],
-    ];
-    setSelectedJokeIds(newSelectedJokeIds);
+  const addJoke = (jokeId: string) => {
+    setSelectedJokeIds((prev) => [...prev, jokeId]);
   };
 
   const removeJoke = (jokeId: string) => {
     setSelectedJokeIds((prev) => prev.filter((id) => id !== jokeId));
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setSelectedJokeIds((items) => {
+        const oldIndex = items.indexOf(active.id as string);
+        const newIndex = items.indexOf(over.id as string);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
   };
 
   const formatDuration = (minutes: number) => {
@@ -136,15 +228,68 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
         </div>
 
         <div className={styles.formSection}>
-          <label className={styles.label}>
-            Selected Jokes ({selectedJokes.length})
-          </label>
-          <div className={styles.selectedJokes}>
-            {selectedJokes.length === 0 ? (
-              <p className={styles.emptyMessage}>No jokes selected yet</p>
-            ) : (
-              selectedJokes.map((joke, index) => (
-                <div key={joke.id} className={styles.selectedJoke}>
+          <div className={styles.sectionHeader}>
+            <label className={styles.label}>
+              Selected Jokes ({selectedJokes.length})
+            </label>
+            {selectedJokes.length > 0 && (
+              <span className={styles.totalDuration}>
+                Total Duration: {formatDuration(totalDuration)}
+              </span>
+            )}
+          </div>
+
+          {selectedJokes.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p>No jokes selected yet</p>
+              <p className={styles.emptyHint}>Search and add jokes below</p>
+            </div>
+          ) : (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={selectedJokeIds}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className={styles.selectedJokesList}>
+                  {selectedJokes.map((joke, index) => (
+                    <SortableJokeItem
+                      key={joke.id}
+                      joke={joke}
+                      index={index}
+                      onRemove={removeJoke}
+                      availableTags={availableTags}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+          )}
+        </div>
+
+        <div className={styles.formSection}>
+          <div className={styles.sectionHeader}>
+            <label className={styles.label}>Available Jokes</label>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={styles.searchInput}
+              placeholder="Search jokes..."
+            />
+          </div>
+
+          {filteredJokes.length === 0 ? (
+            <div className={styles.emptyState}>
+              {searchTerm ? "No jokes found matching your search" : "All jokes have been added to the setlist"}
+            </div>
+          ) : (
+            <div className={styles.availableJokesList}>
+              {filteredJokes.map((joke) => (
+                <div key={joke.id} className={styles.availableJokeItem}>
                   <div className={styles.jokeInfo}>
                     <span className={styles.jokeName}>{joke.name}</span>
                     <div className={styles.jokeDetails}>
@@ -154,86 +299,32 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
                       </span>
                     </div>
                   </div>
-                  <div className={styles.jokeActions}>
-                    <button
-                      type="button"
-                      onClick={() => moveJokeUp(index)}
-                      disabled={index === 0}
-                      className={styles.moveButton}
-                    >
-                      ↑
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => moveJokeDown(index)}
-                      disabled={index === selectedJokes.length - 1}
-                      className={styles.moveButton}
-                    >
-                      ↓
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => removeJoke(joke.id)}
-                      className={styles.removeButton}
-                    >
-                      ×
-                    </button>
+                  <div className={styles.jokeTags}>
+                    {joke.tags.map((tagId) => {
+                      const tag = availableTags.find((t) => t.id === tagId);
+                      return tag ? (
+                        <span
+                          key={tagId}
+                          className={styles.tag}
+                          style={{ backgroundColor: tag.color }}
+                        >
+                          {tag.name}
+                        </span>
+                      ) : null;
+                    })}
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => addJoke(joke.id)}
+                    className={styles.addButton}
+                    title="Add joke to setlist"
+                  >
+                    +
+                  </button>
                 </div>
-              ))
-            )}
-          </div>
-          {selectedJokes.length > 0 && (
-            <div className={styles.totalDuration}>
-              Total Duration: {formatDuration(totalDuration)}
+              ))}
             </div>
           )}
-        </div>
-
-        <div className={styles.formSection}>
-          <label className={styles.label}>Available Jokes</label>
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={styles.searchInput}
-            placeholder="Search jokes..."
-          />
-          <div className={styles.availableJokes}>
-            {filteredJokes.map((joke) => (
-              <div
-                key={joke.id}
-                className={`${styles.availableJoke} ${
-                  selectedJokeIds.includes(joke.id) ? styles.selected : ""
-                }`}
-                onClick={() => toggleJokeSelection(joke.id)}
-              >
-                <div className={styles.jokeInfo}>
-                  <span className={styles.jokeName}>{joke.name}</span>
-                  <div className={styles.jokeDetails}>
-                    <span className={styles.rating}>★ {joke.rating}</span>
-                    <span className={styles.duration}>
-                      {formatDuration(joke.duration)}
-                    </span>
-                  </div>
-                </div>
-                <div className={styles.jokeTags}>
-                  {joke.tags.map((tagId) => {
-                    const tag = availableTags.find((t) => t.id === tagId);
-                    return tag ? (
-                      <span
-                        key={tagId}
-                        className={styles.tag}
-                        style={{ backgroundColor: tag.color }}
-                      >
-                        {tag.name}
-                      </span>
-                    ) : null;
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         <div className={styles.formActions}>

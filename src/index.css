@@ -2,17 +2,21 @@
 
 :root {
   /* New Color Scheme */
-  --color-primary: #4a90b8; /* Muted blue - easy on the eyes */
-  --color-secondary: #87a96b; /* Sage green - calming accent */
-  --color-accent: #6b7280; /* Warm gray - subtle highlights */
-  --color-background: #f8f9fa; /* Light gray - reduces eye strain */
+  --color-primary: #4a90b8;
+  /* Muted blue - easy on the eyes */
+  --color-secondary: #87a96b;
+  /* Sage green - calming accent */
+  --color-accent: #6b7280;
+  /* Warm gray - subtle highlights */
+  --color-background: #f8f9fa;
+  /* Light gray - reduces eye strain */
 
   /* Additional derived colors */
   --color-primary-light: #6ba3c7;
   --color-primary-dark: #3a7a9a;
   --color-secondary-light: #9bb87a;
   --color-secondary-dark: #6b8a55;
-  --color-accent-light: #9ca3af;
+  --color-accent-light: #e5e7eb;
   --color-accent-dark: #4b5563;
 
   /* Text colors */
