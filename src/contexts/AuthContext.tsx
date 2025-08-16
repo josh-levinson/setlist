@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import type { User, AuthState } from "../types";
 import { supabase } from "../lib/supabase";
+import { config, getAuthRedirectUrl } from "../lib/config";
 
 interface AuthContextType extends AuthState {
   signUp: (email: string, password: string) => Promise<void>;
@@ -84,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: config.auth.callbackUrl,
         },
       });
       if (error) throw error;
@@ -98,12 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
 
-      // Use different redirect URLs based on environment
-      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      const redirectUrl = isLocalhost
-        ? `${window.location.origin}/auth/callback?next=/auth/reset-password`
-        : `${window.location.origin}/auth/callback?next=/auth/reset-password`;
-
+      const redirectUrl = config.auth.resetPasswordUrl;
       console.log('Reset password redirect URL:', redirectUrl);
 
       const { error } = await supabase.auth.resetPasswordForEmail(email, {

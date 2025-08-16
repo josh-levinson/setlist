@@ -34,8 +34,8 @@ function AppHeader() {
     );
   }
 
-  // Don't show header on auth routes when not authenticated
-  if (!user && location.pathname.startsWith("/auth/")) {
+  // Don't show header on auth routes (whether authenticated or not)
+  if (location.pathname.startsWith("/auth/")) {
     return null;
   }
 
@@ -88,11 +88,6 @@ function AppContent() {
     );
   }
 
-  // Check if user just completed password reset (they're authenticated but on the root path)
-  if (user && location.pathname === "/") {
-    console.log("User authenticated on root path, redirecting to reset password");
-    return <Navigate to="/auth/reset-password" replace />;
-  }
 
   return (
     <main className={styles.main}>
