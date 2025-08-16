@@ -75,7 +75,6 @@ function AppHeader() {
 
 function AppContent() {
   const { user, loading } = useAuth();
-  const location = useLocation();
 
   console.log("AppContent - user:", user ? user.email : "no user", "loading:", loading);
 

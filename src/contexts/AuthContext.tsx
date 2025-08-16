@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import type { User, AuthState } from "../types";
 import { supabase } from "../lib/supabase";
-import { config, getAuthRedirectUrl } from "../lib/config";
+import { config } from "../lib/config";
 
 interface AuthContextType extends AuthState {
   signUp: (email: string, password: string) => Promise<void>;

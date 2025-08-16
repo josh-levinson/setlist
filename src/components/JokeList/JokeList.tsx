@@ -116,12 +116,6 @@ export function JokeList({
     return new Date(dateString).toLocaleDateString();
   };
 
-  const getTagNames = (tagIds: string[]) => {
-    return tagIds
-      .map((id) => availableTags.find((tag) => tag.id === id)?.name)
-      .filter(Boolean)
-      .join(", ");
-  };
 
   return (
     <div className={`${styles.list} ${shared.container}`}>

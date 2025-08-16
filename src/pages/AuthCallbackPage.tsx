@@ -5,7 +5,6 @@ import styles from "./Pages.module.css";
 import shared from "../styles/shared.module.css";
 
 export function AuthCallbackPage() {
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,13 +37,11 @@ export function AuthCallbackPage() {
           if (error) {
             console.error("Token verification error:", error);
             setError("Invalid or expired reset link. Please request a new password reset.");
-            setIsLoading(false);
             return;
           }
 
           if (!data.user) {
             setError("Invalid reset token. Please request a new password reset.");
-            setIsLoading(false);
             return;
           }
 
@@ -67,7 +64,6 @@ export function AuthCallbackPage() {
         if (error) {
           console.error("Auth callback error:", error);
           setError("Authentication failed. Please try again.");
-          setIsLoading(false);
           return;
         }
 
@@ -81,7 +77,6 @@ export function AuthCallbackPage() {
       } catch (err) {
         console.error("Unexpected error in auth callback:", err);
         setError("An unexpected error occurred. Please try again.");
-        setIsLoading(false);
       }
     };
 
