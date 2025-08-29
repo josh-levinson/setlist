@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Joke, Tag } from '../types'
 import { JokeList } from '../components'
+import { JokeImport } from '../components/JokeImport'
+import type { ImportedJoke } from '../utils/fileImport'
 import { useAuth } from '../contexts/AuthContext'
 import { jokeService, tagService } from '../services/dataService'
 import styles from './Pages.module.css'
@@ -12,6 +14,7 @@ export default function JokesPage() {
   const [jokes, setJokes] = useState<Joke[]>([])
   const [tags, setTags] = useState<Tag[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [showImport, setShowImport] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -59,6 +62,31 @@ export default function JokesPage() {
     navigate('/jokes/new')
   }
 
+  const handleImportJokes = async (importedJokes: ImportedJoke[]) => {
+    if (!user) return
+
+    try {
+      setIsLoading(true)
+      const createdJokes = await Promise.all(
+        importedJokes.map(joke => jokeService.createJoke({ 
+          name: joke.name,
+          content: joke.content || '',
+          rating: joke.rating,
+          duration: joke.duration,
+          tags: joke.tags,
+          user_id: user.id 
+        }))
+      )
+      
+      setJokes(prev => [...createdJokes, ...prev])
+      setShowImport(false)
+    } catch (error) {
+      console.error('Error importing jokes:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className={styles.loading}>
@@ -67,13 +95,29 @@ export default function JokesPage() {
     )
   }
 
+  if (showImport) {
+    return (
+      <div className={styles.page}>
+        <JokeImport
+          onImport={handleImportJokes}
+          onCancel={() => setShowImport(false)}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
         <h1>My Jokes</h1>
-        <button onClick={handleCreateNewJoke} className={styles.btnPrimary}>
-          + Add New Joke
-        </button>
+        <div className={styles.headerActions}>
+          <button onClick={() => setShowImport(true)} className={styles.btnSecondary}>
+            Import Jokes
+          </button>
+          <button onClick={handleCreateNewJoke} className={styles.btnPrimary}>
+            + Add New Joke
+          </button>
+        </div>
       </div>
       
       <JokeList

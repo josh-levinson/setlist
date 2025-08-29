@@ -54,7 +54,8 @@ const SortableJokeItem: React.FC<{
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const formatDuration = (minutes: number) => {
+  const formatDuration = (minutes?: number) => {
+    if (!minutes) return '0m';
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {
@@ -76,7 +77,7 @@ const SortableJokeItem: React.FC<{
       <div className={styles.jokeInfo}>
         <span className={styles.jokeName}>{joke.name}</span>
         <div className={styles.jokeDetails}>
-          <span className={styles.rating}>★ {joke.rating}</span>
+          <span className={styles.rating}>★ {joke.rating || 'N/A'}</span>
           <span className={styles.duration}>
             {formatDuration(joke.duration)}
           </span>
@@ -142,7 +143,7 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
   );
 
   const totalDuration = selectedJokes.reduce(
-    (sum, joke) => sum + joke.duration,
+    (sum, joke) => sum + (joke.duration || 0),
     0
   );
 
@@ -191,7 +192,8 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
     }
   };
 
-  const formatDuration = (minutes: number) => {
+  const formatDuration = (minutes?: number) => {
+    if (!minutes) return '0m';
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {
@@ -293,7 +295,7 @@ export const SetlistForm: React.FC<SetlistFormProps> = ({
                   <div className={styles.jokeInfo}>
                     <span className={styles.jokeName}>{joke.name}</span>
                     <div className={styles.jokeDetails}>
-                      <span className={styles.rating}>★ {joke.rating}</span>
+                      <span className={styles.rating}>★ {joke.rating || 'N/A'}</span>
                       <span className={styles.duration}>
                         {formatDuration(joke.duration)}
                       </span>

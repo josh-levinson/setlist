@@ -24,7 +24,8 @@ export const SetlistList: React.FC<SetlistListProps> = ({
     return availableTags.find((tag) => tag.id === tagId);
   };
 
-  const formatDuration = (minutes: number) => {
+  const formatDuration = (minutes?: number) => {
+    if (!minutes) return '0m';
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {
@@ -93,7 +94,7 @@ export const SetlistList: React.FC<SetlistListProps> = ({
                     <div className={styles.jokeInfo}>
                       <span className={styles.jokeName}>{joke.name}</span>
                       <div className={styles.jokeDetails}>
-                        <span className={styles.rating}>★ {joke.rating}</span>
+                        <span className={styles.rating}>★ {joke.rating || 'N/A'}</span>
                         <span className={styles.duration}>
                           {formatDuration(joke.duration)}
                         </span>

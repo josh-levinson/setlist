@@ -12,7 +12,8 @@ interface JokeViewerProps {
 export function JokeViewer({ joke, availableTags, onEdit, onBack }: JokeViewerProps) {
   const jokeTags = availableTags.filter(tag => joke.tags.includes(tag.id));
 
-  const renderStars = (rating: number) => {
+  const renderStars = (rating?: number) => {
+    if (!rating) return <span className={styles.noRating}>No rating</span>;
     return Array.from({ length: 10 }, (_, i) => (
       <span 
         key={i} 
@@ -41,16 +42,24 @@ export function JokeViewer({ joke, availableTags, onEdit, onBack }: JokeViewerPr
           <div className={styles.metaItem}>
             <span className={styles.metaLabel}>Rating:</span>
             <div className={styles.ratingDisplay}>
-              <span className={styles.ratingValue}>{joke.rating.toFixed(1)}/10</span>
-              <div className={styles.ratingStars}>
-                {renderStars(joke.rating)}
-              </div>
+              {joke.rating ? (
+                <>
+                  <span className={styles.ratingValue}>{joke.rating.toFixed(1)}/10</span>
+                  <div className={styles.ratingStars}>
+                    {renderStars(joke.rating)}
+                  </div>
+                </>
+              ) : (
+                <span className={styles.noRating}>No rating</span>
+              )}
             </div>
           </div>
           
           <div className={styles.metaItem}>
             <span className={styles.metaLabel}>Duration:</span>
-            <span className={styles.durationValue}>{joke.duration} minutes</span>
+            <span className={styles.durationValue}>
+              {joke.duration ? `${joke.duration} minutes` : 'No duration'}
+            </span>
           </div>
         </div>
 

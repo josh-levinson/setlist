@@ -55,12 +55,12 @@ export function JokeList({
           bValue = b.name.toLowerCase();
           break;
         case "rating":
-          aValue = a.rating;
-          bValue = b.rating;
+          aValue = a.rating || 0;
+          bValue = b.rating || 0;
           break;
         case "duration":
-          aValue = a.duration;
-          bValue = b.duration;
+          aValue = a.duration || 0;
+          bValue = b.duration || 0;
           break;
         case "created_at":
           aValue = new Date(a.created_at).getTime();
@@ -90,10 +90,11 @@ export function JokeList({
     setCurrentPage(1);
   }, [searchTerm, selectedTagFilter]);
 
-  const totalDuration = jokes.reduce((sum, joke) => sum + joke.duration, 0);
+  const totalDuration = jokes.reduce((sum, joke) => sum + (joke.duration || 0), 0);
+  const jokesWithRating = jokes.filter(joke => joke.rating !== undefined);
   const averageRating =
-    jokes.length > 0
-      ? jokes.reduce((sum, joke) => sum + joke.rating, 0) / jokes.length
+    jokesWithRating.length > 0
+      ? jokesWithRating.reduce((sum, joke) => sum + (joke.rating || 0), 0) / jokesWithRating.length
       : 0;
 
   const handleSort = (option: SortOption) => {
@@ -242,10 +243,12 @@ export function JokeList({
                       </button>
                     </td>
                     <td className={styles.rating}>
-                      <span className={styles.ratingValue}>{joke.rating}/10</span>
+                      <span className={styles.ratingValue}>
+                        {joke.rating ? `${joke.rating}/10` : 'No rating'}
+                      </span>
                     </td>
                     <td className={styles.duration}>
-                      {joke.duration} min
+                      {joke.duration ? `${joke.duration} min` : 'No duration'}
                     </td>
                     <td className={styles.tags}>
                       {joke.tags.length > 0 ? (

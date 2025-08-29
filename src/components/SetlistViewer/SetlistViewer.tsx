@@ -21,7 +21,8 @@ export const SetlistViewer: React.FC<SetlistViewerProps> = ({
     return availableTags.find(tag => tag.id === tagId);
   };
 
-  const formatDuration = (minutes: number) => {
+  const formatDuration = (minutes?: number) => {
+    if (!minutes) return '0m';
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {
@@ -32,7 +33,7 @@ export const SetlistViewer: React.FC<SetlistViewerProps> = ({
 
   const totalDuration = calculateSetlistDuration(setlist);
   const averageRating = setlist.jokes.length > 0
-    ? (setlist.jokes.reduce((sum, joke) => sum + joke.rating, 0) / setlist.jokes.length).toFixed(1)
+    ? (setlist.jokes.reduce((sum, joke) => sum + (joke.rating || 0), 0) / setlist.jokes.length).toFixed(1)
     : '0.0';
 
   return (
@@ -83,7 +84,7 @@ export const SetlistViewer: React.FC<SetlistViewerProps> = ({
                   <div className={styles.jokeHeader}>
                     <h3 className={styles.jokeName}>{joke.name}</h3>
                     <div className={styles.jokeMeta}>
-                      <span className={styles.rating}>★ {joke.rating}</span>
+                      <span className={styles.rating}>★ {joke.rating || 'N/A'}</span>
                       <span className={styles.duration}>{formatDuration(joke.duration)}</span>
                     </div>
                   </div>

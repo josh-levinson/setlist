@@ -9,8 +9,8 @@ interface JokeFormProps {
   onSubmit: (joke: {
     name: string;
     content: string;
-    rating: number;
-    duration: number;
+    rating?: number;
+    duration?: number;
     tags: string[];
   }) => void;
   onCancel: () => void;
@@ -27,8 +27,8 @@ export const JokeForm: React.FC<JokeFormProps> = ({
   const [formData, setFormData] = useState({
     name: joke?.name || "",
     content: joke?.content || "",
-    rating: joke?.rating || 3,
-    duration: joke?.duration || 2,
+    rating: joke?.rating || "",
+    duration: joke?.duration || "",
     tags: joke?.tags || [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -38,8 +38,8 @@ export const JokeForm: React.FC<JokeFormProps> = ({
       setFormData({
         name: joke.name,
         content: joke.content || "",
-        rating: joke.rating,
-        duration: joke.duration,
+        rating: joke.rating || "",
+        duration: joke.duration || "",
         tags: joke.tags,
       });
     }
@@ -56,11 +56,11 @@ export const JokeForm: React.FC<JokeFormProps> = ({
       newErrors.content = "Joke content is required";
     }
 
-    if (formData.rating < 1 || formData.rating > 5) {
+    if (formData.rating && (Number(formData.rating) < 1 || Number(formData.rating) > 5)) {
       newErrors.rating = "Rating must be between 1 and 5";
     }
 
-    if (formData.duration < 1) {
+    if (formData.duration && Number(formData.duration) < 1) {
       newErrors.duration = "Duration must be at least 1 minute";
     }
 
@@ -72,7 +72,13 @@ export const JokeForm: React.FC<JokeFormProps> = ({
     e.preventDefault();
 
     if (validateForm()) {
-      onSubmit(formData);
+      onSubmit({
+        name: formData.name,
+        content: formData.content,
+        rating: formData.rating ? Number(formData.rating) : undefined,
+        duration: formData.duration ? Number(formData.duration) : undefined,
+        tags: formData.tags
+      });
     }
   };
 
@@ -138,7 +144,7 @@ export const JokeForm: React.FC<JokeFormProps> = ({
       <div className={styles.formRow}>
         <div className={styles.formGroup}>
           <label htmlFor="rating" className={styles.label}>
-            Rating
+            Rating (optional)
           </label>
           <input
             type="number"
@@ -148,8 +154,9 @@ export const JokeForm: React.FC<JokeFormProps> = ({
             className={`${styles.input} ${errors.rating ? styles.error : ""}`}
             value={formData.rating}
             onChange={(e) =>
-              handleInputChange("rating", parseInt(e.target.value))
+              handleInputChange("rating", e.target.value)
             }
+            placeholder="1-5"
           />
           {errors.rating && (
             <span className={styles.errorMessage}>{errors.rating}</span>
@@ -158,7 +165,7 @@ export const JokeForm: React.FC<JokeFormProps> = ({
 
         <div className={styles.formGroup}>
           <label htmlFor="duration" className={styles.label}>
-            Duration (minutes)
+            Duration (minutes, optional)
           </label>
           <input
             type="number"
@@ -167,8 +174,9 @@ export const JokeForm: React.FC<JokeFormProps> = ({
             className={`${styles.input} ${errors.duration ? styles.error : ""}`}
             value={formData.duration}
             onChange={(e) =>
-              handleInputChange("duration", parseInt(e.target.value))
+              handleInputChange("duration", e.target.value)
             }
+            placeholder="Minutes"
           />
           {errors.duration && (
             <span className={styles.errorMessage}>{errors.duration}</span>

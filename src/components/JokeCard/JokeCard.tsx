@@ -25,7 +25,8 @@ export const JokeCard: React.FC<JokeCardProps> = ({ joke, availableTags, onEdit,
     onClick(joke);
   };
 
-  const renderStars = (rating: number) => {
+  const renderStars = (rating?: number) => {
+    if (!rating) return <span className={styles.noRating}>No rating</span>;
     return Array.from({ length: 5 }, (_, i) => (
       <span key={i} className={`${styles.star} ${i < rating ? styles.filled : ''}`}>
         ★
@@ -79,7 +80,9 @@ export const JokeCard: React.FC<JokeCardProps> = ({ joke, availableTags, onEdit,
         </div>
         <div className={styles.duration}>
           <span className={styles.label}>Duration:</span>
-          <span className={styles.value}>{joke.duration}s</span>
+          <span className={styles.value}>
+            {joke.duration ? `${joke.duration}m` : 'No duration'}
+          </span>
         </div>
       </div>
     </div>

@@ -31,9 +31,9 @@ export class JokeSorter {
       case 'name':
         return joke.name.toLowerCase();
       case 'rating':
-        return joke.rating;
+        return joke.rating || 0;
       case 'duration':
-        return joke.duration;
+        return joke.duration || 0;
       default:
         return joke.name.toLowerCase();
     }

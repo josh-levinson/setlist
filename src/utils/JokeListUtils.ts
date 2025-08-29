@@ -21,9 +21,9 @@ export class JokeListUtils {
    */
   static calculateStats(jokes: Joke[]): { totalDuration: number; averageRating: number; count: number } {
     const count = jokes.length;
-    const totalDuration = jokes.reduce((sum, joke) => sum + joke.duration, 0);
+    const totalDuration = jokes.reduce((sum, joke) => sum + (joke.duration || 0), 0);
     const averageRating = count > 0 
-      ? jokes.reduce((sum, joke) => sum + joke.rating, 0) / count 
+      ? jokes.reduce((sum, joke) => sum + (joke.rating || 0), 0) / count 
       : 0;
 
     return {
