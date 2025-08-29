@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Joke, Tag } from '../types'
-import { JokeList } from '../components'
+import { JokeList, ConfirmationDialog } from '../components'
 import { JokeImport } from '../components/JokeImport'
 import type { ImportedJoke } from '../utils/fileImport'
 import { useAuth } from '../contexts/AuthContext'
@@ -15,6 +15,7 @@ export default function JokesPage() {
   const [tags, setTags] = useState<Tag[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showImport, setShowImport] = useState(false)
+  const [jokeToDelete, setJokeToDelete] = useState<string | null>(null)
 
   useEffect(() => {
     if (user) {
@@ -45,13 +46,25 @@ export default function JokesPage() {
     navigate(`/jokes/${joke.id}/edit`)
   }
 
-  const handleDeleteJoke = async (id: string) => {
+  const handleDeleteJoke = (id: string) => {
+    setJokeToDelete(id)
+  }
+
+  const confirmDeleteJoke = async () => {
+    if (!jokeToDelete) return
+    
     try {
-      await jokeService.deleteJoke(id)
-      setJokes(prev => prev.filter(joke => joke.id !== id))
+      await jokeService.deleteJoke(jokeToDelete)
+      setJokes(prev => prev.filter(joke => joke.id !== jokeToDelete))
     } catch (error) {
       console.error('Error deleting joke:', error)
+    } finally {
+      setJokeToDelete(null)
     }
+  }
+
+  const cancelDeleteJoke = () => {
+    setJokeToDelete(null)
   }
 
   const handleViewJoke = (joke: Joke) => {
@@ -106,6 +119,10 @@ export default function JokesPage() {
     )
   }
 
+  const jokeToDeleteName = jokeToDelete 
+    ? jokes.find(joke => joke.id === jokeToDelete)?.name || 'this joke'
+    : '';
+
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
@@ -126,6 +143,14 @@ export default function JokesPage() {
         onEdit={handleEditJoke}
         onDelete={handleDeleteJoke}
         onView={handleViewJoke}
+      />
+
+      <ConfirmationDialog
+        isOpen={!!jokeToDelete}
+        title="Delete Joke"
+        message={`Are you sure you want to delete "${jokeToDeleteName}"? This action cannot be undone.`}
+        onConfirm={confirmDeleteJoke}
+        onCancel={cancelDeleteJoke}
       />
     </div>
   )

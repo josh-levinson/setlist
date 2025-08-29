@@ -44,6 +44,25 @@
   width: 100%;
 }
 
+.itemsPerPageSelector {
+  display: flex;
+  align-items: center;
+}
+
+.itemsPerPageLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.itemsPerPageSelect {
+  min-width: 60px;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.9rem;
+}
+
 .sortControls {
   display: flex;
   align-items: center;
@@ -303,6 +322,10 @@
 
   .searchBox {
     max-width: none;
+  }
+
+  .itemsPerPageSelector {
+    justify-content: center;
   }
 
   .table th,

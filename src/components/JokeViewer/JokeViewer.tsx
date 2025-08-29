@@ -1,4 +1,5 @@
 import type { Joke, Tag } from '../../types';
+import { formatSecondsToMMSS } from '../../utils/duration';
 import styles from './JokeViewer.module.css';
 import shared from '../../styles/shared.module.css';
 
@@ -58,7 +59,7 @@ export function JokeViewer({ joke, availableTags, onEdit, onBack }: JokeViewerPr
           <div className={styles.metaItem}>
             <span className={styles.metaLabel}>Duration:</span>
             <span className={styles.durationValue}>
-              {joke.duration ? `${joke.duration} minutes` : 'No duration'}
+              {joke.duration ? formatSecondsToMMSS(joke.duration) : 'No duration'}
             </span>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Joke, Tag } from '../../types';
+import { formatSecondsToMMSS } from '../../utils/duration';
 import styles from './JokeCard.module.css';
 
 interface JokeCardProps {
@@ -81,7 +82,7 @@ export const JokeCard: React.FC<JokeCardProps> = ({ joke, availableTags, onEdit,
         <div className={styles.duration}>
           <span className={styles.label}>Duration:</span>
           <span className={styles.value}>
-            {joke.duration ? `${joke.duration}m` : 'No duration'}
+            {joke.duration ? formatSecondsToMMSS(joke.duration) : 'No duration'}
           </span>
         </div>
       </div>

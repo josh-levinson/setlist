@@ -1,6 +1,7 @@
 import React from "react";
 import type { Setlist, Joke, Tag } from "../../types";
 import { calculateSetlistDuration } from "../../types";
+import { formatSecondsToMMSS } from "../../utils/duration";
 import styles from "./SetlistList.module.css";
 import shared from "../../styles/shared.module.css";
 
@@ -24,14 +25,9 @@ export const SetlistList: React.FC<SetlistListProps> = ({
     return availableTags.find((tag) => tag.id === tagId);
   };
 
-  const formatDuration = (minutes?: number) => {
-    if (!minutes) return '0m';
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    if (hours > 0) {
-      return `${hours}h ${mins}m`;
-    }
-    return `${mins}m`;
+  const formatDuration = (seconds?: number) => {
+    if (!seconds) return '0:00';
+    return formatSecondsToMMSS(seconds);
   };
 
   return (

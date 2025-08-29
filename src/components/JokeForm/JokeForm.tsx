@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { Joke, Tag } from "../../types";
 import { TagSelector } from "../TagSelector";
+import { formatSecondsToMMSS, parseMMSSToSeconds, validateDurationInput } from "../../utils/duration";
 import styles from "./JokeForm.module.css";
 
 interface JokeFormProps {
@@ -8,7 +9,7 @@ interface JokeFormProps {
   availableTags: Tag[];
   onSubmit: (joke: {
     name: string;
-    content: string;
+    content?: string;
     rating?: number;
     duration?: number;
     tags: string[];
@@ -28,7 +29,7 @@ export const JokeForm: React.FC<JokeFormProps> = ({
     name: joke?.name || "",
     content: joke?.content || "",
     rating: joke?.rating || "",
-    duration: joke?.duration || "",
+    duration: joke?.duration ? formatSecondsToMMSS(joke.duration) : "",
     tags: joke?.tags || [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -39,7 +40,7 @@ export const JokeForm: React.FC<JokeFormProps> = ({
         name: joke.name,
         content: joke.content || "",
         rating: joke.rating || "",
-        duration: joke.duration || "",
+        duration: joke.duration ? formatSecondsToMMSS(joke.duration) : "",
         tags: joke.tags,
       });
     }
@@ -52,16 +53,16 @@ export const JokeForm: React.FC<JokeFormProps> = ({
       newErrors.name = "Joke name is required";
     }
 
-    if (!formData.content.trim()) {
-      newErrors.content = "Joke content is required";
-    }
 
     if (formData.rating && (Number(formData.rating) < 1 || Number(formData.rating) > 5)) {
       newErrors.rating = "Rating must be between 1 and 5";
     }
 
-    if (formData.duration && Number(formData.duration) < 1) {
-      newErrors.duration = "Duration must be at least 1 minute";
+    if (formData.duration) {
+      const durationError = validateDurationInput(formData.duration);
+      if (durationError) {
+        newErrors.duration = durationError;
+      }
     }
 
     setErrors(newErrors);
@@ -74,9 +75,9 @@ export const JokeForm: React.FC<JokeFormProps> = ({
     if (validateForm()) {
       onSubmit({
         name: formData.name,
-        content: formData.content,
+        content: formData.content.trim() || undefined,
         rating: formData.rating ? Number(formData.rating) : undefined,
-        duration: formData.duration ? Number(formData.duration) : undefined,
+        duration: formData.duration ? parseMMSSToSeconds(formData.duration) : undefined,
         tags: formData.tags
       });
     }
@@ -116,14 +117,14 @@ export const JokeForm: React.FC<JokeFormProps> = ({
 
       <div className={styles.formGroup}>
         <label htmlFor="content" className={styles.label}>
-          Joke Content *
+          Joke Content (optional)
         </label>
         <textarea
           id="content"
           className={`${styles.textarea} ${errors.content ? styles.error : ""}`}
           value={formData.content}
           onChange={(e) => handleInputChange("content", e.target.value)}
-          placeholder="Enter joke content"
+          placeholder="Enter joke content (optional)"
           rows={6}
         />
         {errors.content && (
@@ -165,18 +166,17 @@ export const JokeForm: React.FC<JokeFormProps> = ({
 
         <div className={styles.formGroup}>
           <label htmlFor="duration" className={styles.label}>
-            Duration (minutes, optional)
+            Duration (MM:SS, optional)
           </label>
           <input
-            type="number"
+            type="text"
             id="duration"
-            min="1"
             className={`${styles.input} ${errors.duration ? styles.error : ""}`}
             value={formData.duration}
             onChange={(e) =>
               handleInputChange("duration", e.target.value)
             }
-            placeholder="Minutes"
+            placeholder="1:30 or 90"
           />
           {errors.duration && (
             <span className={styles.errorMessage}>{errors.duration}</span>

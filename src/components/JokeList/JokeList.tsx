@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { Joke, Tag } from "../../types";
+import { formatSecondsToMMSS } from "../../utils/duration";
 import styles from "./JokeList.module.css";
 import shared from "../../styles/shared.module.css";
 
@@ -15,7 +16,7 @@ interface JokeListProps {
 type SortOption = "name" | "rating" | "duration" | "created_at";
 type SortDirection = "asc" | "desc";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
 
 export function JokeList({
   jokes,
@@ -29,6 +30,7 @@ export function JokeList({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTagFilter, setSelectedTagFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
 
   const filteredAndSortedJokes = useMemo(() => {
     const filtered = jokes.filter((joke) => {
@@ -80,15 +82,15 @@ export function JokeList({
   }, [jokes, sortBy, sortDirection, searchTerm, selectedTagFilter]);
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredAndSortedJokes.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const totalPages = Math.ceil(filteredAndSortedJokes.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
   const paginatedJokes = filteredAndSortedJokes.slice(startIndex, endIndex);
 
-  // Reset to first page when filters change
-  useMemo(() => {
+  // Reset to first page when filters or items per page change
+  useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedTagFilter]);
+  }, [searchTerm, selectedTagFilter, itemsPerPage]);
 
   const totalDuration = jokes.reduce((sum, joke) => sum + (joke.duration || 0), 0);
   const jokesWithRating = jokes.filter(joke => joke.rating !== undefined);
@@ -125,7 +127,7 @@ export function JokeList({
           Jokes ({filteredAndSortedJokes.length})
         </h2>
         <div className={styles.stats}>
-          <span>Total Duration: {totalDuration.toFixed(1)} min</span>
+          <span>Total Duration: {formatSecondsToMMSS(totalDuration)}</span>
           <span>Average Rating: {averageRating.toFixed(1)}/10</span>
         </div>
       </div>
@@ -139,6 +141,24 @@ export function JokeList({
             onChange={(e) => setSearchTerm(e.target.value)}
             className={`${styles.searchInput} ${shared.input}`}
           />
+        </div>
+
+        <div className={styles.itemsPerPageSelector}>
+          <label className={styles.itemsPerPageLabel}>
+            Show:
+            <select
+              value={itemsPerPage}
+              onChange={(e) => setItemsPerPage(Number(e.target.value))}
+              className={`${styles.itemsPerPageSelect} ${shared.input}`}
+            >
+              {ITEMS_PER_PAGE_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            per page
+          </label>
         </div>
 
         <div className={styles.sortControls}>
@@ -248,7 +268,7 @@ export function JokeList({
                       </span>
                     </td>
                     <td className={styles.duration}>
-                      {joke.duration ? `${joke.duration} min` : 'No duration'}
+                      {joke.duration ? formatSecondsToMMSS(joke.duration) : 'No duration'}
                     </td>
                     <td className={styles.tags}>
                       {joke.tags.length > 0 ? (

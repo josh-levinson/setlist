@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Setlist, Joke, Tag } from '../types'
-import { SetlistList } from '../components'
+import { SetlistList, ConfirmationDialog } from '../components'
 import { useAuth } from '../contexts/AuthContext'
 import { setlistService, jokeService, tagService } from '../services/dataService'
 import styles from './Pages.module.css'
@@ -13,6 +13,7 @@ export default function SetlistsPage() {
   const [jokes, setJokes] = useState<Joke[]>([])
   const [tags, setTags] = useState<Tag[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [setlistToDelete, setSetlistToDelete] = useState<string | null>(null)
 
   useEffect(() => {
     if (user) {
@@ -45,13 +46,25 @@ export default function SetlistsPage() {
     navigate(`/setlists/${setlist.id}/edit`)
   }
 
-  const handleDeleteSetlist = async (id: string) => {
+  const handleDeleteSetlist = (id: string) => {
+    setSetlistToDelete(id)
+  }
+
+  const confirmDeleteSetlist = async () => {
+    if (!setlistToDelete) return
+    
     try {
-      await setlistService.deleteSetlist(id)
-      setSetlists(prev => prev.filter(setlist => setlist.id !== id))
+      await setlistService.deleteSetlist(setlistToDelete)
+      setSetlists(prev => prev.filter(setlist => setlist.id !== setlistToDelete))
     } catch (error) {
       console.error('Error deleting setlist:', error)
+    } finally {
+      setSetlistToDelete(null)
     }
+  }
+
+  const cancelDeleteSetlist = () => {
+    setSetlistToDelete(null)
   }
 
   const handleViewSetlist = (setlist: Setlist) => {
@@ -70,6 +83,10 @@ export default function SetlistsPage() {
     )
   }
 
+  const setlistToDeleteName = setlistToDelete 
+    ? setlists.find(setlist => setlist.id === setlistToDelete)?.name || 'this setlist'
+    : '';
+
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
@@ -86,6 +103,14 @@ export default function SetlistsPage() {
         onEdit={handleEditSetlist}
         onDelete={handleDeleteSetlist}
         onView={handleViewSetlist}
+      />
+
+      <ConfirmationDialog
+        isOpen={!!setlistToDelete}
+        title="Delete Setlist"
+        message={`Are you sure you want to delete "${setlistToDeleteName}"? This action cannot be undone.`}
+        onConfirm={confirmDeleteSetlist}
+        onCancel={cancelDeleteSetlist}
       />
     </div>
   )

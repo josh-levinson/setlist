@@ -16,7 +16,7 @@ export interface Joke {
   name: string;
   content?: string;
   rating?: number;
-  duration?: number; // in minutes
+  duration?: number; // in seconds
   tags: string[]; // array of tag IDs
   user_id: string; // Owner of the joke
   created_at: string;
