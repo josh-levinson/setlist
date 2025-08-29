@@ -103,7 +103,7 @@ const hasFilters = JokeListUtils.hasActiveFilters(options);
 ```typescript
 const stats = JokeListUtils.calculateStats(jokes);
 console.log(`Total duration: ${stats.totalDuration} minutes`);
-console.log(`Average rating: ${stats.averageRating}/10`);
+console.log(`Average rating: ${stats.averageRating}/5`);
 console.log(`Joke count: ${stats.count}`);
 ```
 
@@ -113,4 +113,4 @@ console.log(`Joke count: ${stats.count}`);
 2. **Reusability**: Utilities can be used across different components
 3. **Testability**: Logic can be easily unit tested in isolation
 4. **Maintainability**: Changes to filtering/sorting logic are centralized
-5. **Type Safety**: Full TypeScript support with proper type definitions 
+5. **Type Safety**: Full TypeScript support with proper type definitions

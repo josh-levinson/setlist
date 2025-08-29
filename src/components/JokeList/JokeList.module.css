@@ -205,6 +205,34 @@
   color: var(--color-text-primary);
 }
 
+.starRating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.star {
+  color: var(--color-border);
+  font-size: 0.9rem;
+}
+
+.star.filled {
+  color: #fbbf24; /* Gold color for filled stars */
+}
+
+.ratingNumber {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-left: 0.25rem;
+}
+
+.noRating {
+  color: var(--color-text-muted);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
 .duration {
   text-align: center;
   color: var(--color-text-secondary);

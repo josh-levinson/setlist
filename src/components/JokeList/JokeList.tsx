@@ -119,6 +119,23 @@ export function JokeList({
     return new Date(dateString).toLocaleDateString();
   };
 
+  const renderStars = (rating?: number) => {
+    if (!rating) return <span className={styles.noRating}>No rating</span>;
+    return (
+      <div className={styles.starRating}>
+        {Array.from({ length: 5 }, (_, i) => (
+          <span
+            key={i}
+            className={`${styles.star} ${i < Math.floor(rating) ? styles.filled : ''}`}
+          >
+            ★
+          </span>
+        ))}
+        <span className={styles.ratingNumber}>({rating})</span>
+      </div>
+    );
+  };
+
 
   return (
     <div className={`${styles.list} ${shared.container}`}>
@@ -128,7 +145,7 @@ export function JokeList({
         </h2>
         <div className={styles.stats}>
           <span>Total Duration: {formatSecondsToMMSS(totalDuration)}</span>
-          <span>Average Rating: {averageRating.toFixed(1)}/10</span>
+          <span>Average Rating: {averageRating.toFixed(1)}/5</span>
         </div>
       </div>
 
@@ -263,9 +280,7 @@ export function JokeList({
                       </button>
                     </td>
                     <td className={styles.rating}>
-                      <span className={styles.ratingValue}>
-                        {joke.rating ? `${joke.rating}/10` : 'No rating'}
-                      </span>
+                      {renderStars(joke.rating)}
                     </td>
                     <td className={styles.duration}>
                       {joke.duration ? formatSecondsToMMSS(joke.duration) : 'No duration'}

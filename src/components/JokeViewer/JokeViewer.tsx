@@ -15,9 +15,9 @@ export function JokeViewer({ joke, availableTags, onEdit, onBack }: JokeViewerPr
 
   const renderStars = (rating?: number) => {
     if (!rating) return <span className={styles.noRating}>No rating</span>;
-    return Array.from({ length: 10 }, (_, i) => (
-      <span 
-        key={i} 
+    return Array.from({ length: 5 }, (_, i) => (
+      <span
+        key={i}
         className={`${styles.star} ${i < Math.floor(rating) ? styles.filled : ''}`}
       >
         ★
@@ -38,14 +38,14 @@ export function JokeViewer({ joke, availableTags, onEdit, onBack }: JokeViewerPr
 
       <div className={styles.content}>
         <h1 className={styles.title}>{joke.name}</h1>
-        
+
         <div className={styles.metaInfo}>
           <div className={styles.metaItem}>
             <span className={styles.metaLabel}>Rating:</span>
             <div className={styles.ratingDisplay}>
               {joke.rating ? (
                 <>
-                  <span className={styles.ratingValue}>{joke.rating.toFixed(1)}/10</span>
+                  <span className={styles.ratingValue}>{joke.rating.toFixed(1)}/5</span>
                   <div className={styles.ratingStars}>
                     {renderStars(joke.rating)}
                   </div>
@@ -55,7 +55,7 @@ export function JokeViewer({ joke, availableTags, onEdit, onBack }: JokeViewerPr
               )}
             </div>
           </div>
-          
+
           <div className={styles.metaItem}>
             <span className={styles.metaLabel}>Duration:</span>
             <span className={styles.durationValue}>
@@ -100,4 +100,4 @@ export function JokeViewer({ joke, availableTags, onEdit, onBack }: JokeViewerPr
       </div>
     </div>
   );
-} 
+}
