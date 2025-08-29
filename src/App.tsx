@@ -17,6 +17,7 @@ import {
   SetlistViewPage,
   AuthCallbackPage,
   ResetPasswordPage,
+  TagAnalysisPage,
 } from "./pages";
 import styles from "./App.module.css";
 import shared from "./styles/shared.module.css";
@@ -61,6 +62,13 @@ function AppHeader() {
             }`}
         >
           Setlists
+        </Link>
+        <Link
+          to="/tag-analysis"
+          className={`${styles.navButton} ${location.pathname.startsWith("/tag-analysis") ? styles.active : ""
+            }`}
+        >
+          AI Tags
         </Link>
       </nav>
       <div className={styles.userSection}>
@@ -107,6 +115,7 @@ function AppContent() {
             <Route path="/setlists/new" element={<SetlistFormPage />} />
             <Route path="/setlists/:id" element={<SetlistViewPage />} />
             <Route path="/setlists/:id/edit" element={<SetlistFormPage />} />
+            <Route path="/tag-analysis" element={<TagAnalysisPage />} />
             <Route path="*" element={<Navigate to="/jokes" replace />} />
           </>
         ) : (

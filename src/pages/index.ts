@@ -6,3 +6,4 @@ export { default as SetlistFormPage } from "./SetlistFormPage";
 export { default as SetlistViewPage } from "./SetlistViewPage";
 export { AuthCallbackPage } from "./AuthCallbackPage";
 export { ResetPasswordPage } from "./ResetPasswordPage";
+export { TagAnalysisPage } from "./TagAnalysisPage";

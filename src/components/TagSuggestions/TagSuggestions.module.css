@@ -1,0 +1,181 @@
+.container {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #fafafa;
+}
+
+.jokeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.jokeName {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.jokeContent {
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.existingTags {
+  margin-bottom: 1rem;
+}
+
+.existingTagsLabel {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.suggestionsSection {
+  margin-top: 1rem;
+}
+
+.suggestionsLabel {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-weight: 500;
+}
+
+.suggestionsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.suggestionTag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  border: 2px solid transparent;
+}
+
+.suggestionTag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.suggestionTag.accepted {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+}
+
+.suggestionTag.rejected {
+  opacity: 0.4;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.suggestionTag.rejected:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.actionBtn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.acceptAllBtn {
+  background: #4CAF50;
+  color: white;
+}
+
+.acceptAllBtn:hover {
+  background: #45a049;
+}
+
+.rejectAllBtn {
+  background: #f44336;
+  color: white;
+}
+
+.rejectAllBtn:hover {
+  background: #da190b;
+}
+
+.resetBtn {
+  background: #2196F3;
+  color: white;
+}
+
+.resetBtn:hover {
+  background: #0b7dda;
+}
+
+.noSuggestions {
+  color: #666;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e0e0e0;
+  border-top: 2px solid #666;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

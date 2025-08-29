@@ -73,7 +73,7 @@ export const setlistService = {
       .order('created_at', { ascending: false })
 
     if (error) throw error
-    
+
     // Transform the data to match our Setlist interface
     return (data || []).map(setlist => ({
       ...setlist,
@@ -94,7 +94,7 @@ export const setlistService = {
       .single()
 
     if (error) throw error
-    
+
     // Transform the data to match our Setlist interface
     return {
       ...data,
@@ -104,7 +104,7 @@ export const setlistService = {
 
   async createSetlist(setlist: Omit<Setlist, 'id' | 'created_at' | 'updated_at'>): Promise<Setlist> {
     const { jokes, ...setlistData } = setlist
-    
+
     // Create the setlist
     const { data: setlistResult, error: setlistError } = await supabase
       .from('setlists')
@@ -136,7 +136,7 @@ export const setlistService = {
 
   async updateSetlist(id: string, setlist: Partial<Setlist>): Promise<Setlist> {
     const { jokes, ...setlistData } = setlist
-    
+
     // Update the setlist
     const { data: setlistResult, error: setlistError } = await supabase
       .from('setlists')
@@ -237,4 +237,16 @@ export const tagService = {
 
     if (error) throw error
   }
-} 
+}
+
+// LLM Tag Generation Service
+export const llmTagService = {
+  async generateJokeTags(jokes: { id: string; name: string; content: string }[]): Promise<{ id: string; suggestedTags: string[] }[]> {
+    const { data, error } = await supabase.functions.invoke('generate-joke-tags', {
+      body: { jokes }
+    })
+
+    if (error) throw error
+    return data || []
+  }
+}
