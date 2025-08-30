@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { jokeService, tagService, llmTagService } from '../services/dataService'
@@ -85,7 +85,7 @@ export function TagAnalysisPage() {
       console.log('LLM response:', suggestionsData)
 
       // Handle the API response format - extract results array
-      const rawSuggestions = suggestionsData?.results || suggestionsData || []
+      const rawSuggestions = Array.isArray(suggestionsData) ? suggestionsData : ((suggestionsData as any)?.results || [])
 
             // Transform the API response to match our expected format
       const suggestions = rawSuggestions.map((item: any) => ({
@@ -95,8 +95,8 @@ export function TagAnalysisPage() {
 
       // Collect all unique tag names from suggestions
       const allSuggestedTagNames = new Set<string>()
-      suggestions.forEach(suggestion => {
-        suggestion.suggestedTags.forEach(tag => allSuggestedTagNames.add(tag))
+      suggestions.forEach((suggestion: JokeSuggestion) => {
+        suggestion.suggestedTags.forEach((tag: string) => allSuggestedTagNames.add(tag))
       })
 
       // Generate consistent colors for all suggested tags
@@ -105,9 +105,9 @@ export function TagAnalysisPage() {
 
       // Initialize tag states for all jokes
       const initialTagStates: Record<string, Record<string, TagState>> = {}
-      suggestions.forEach(suggestion => {
+      suggestions.forEach((suggestion: JokeSuggestion) => {
         initialTagStates[suggestion.id] = {}
-        suggestion.suggestedTags.forEach(tag => {
+        suggestion.suggestedTags.forEach((tag: string) => {
           initialTagStates[suggestion.id][tag] = 'pending'
         })
       })

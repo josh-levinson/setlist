@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Joke, Tag } from '../../types'
 import { getTagColor } from '../../utils/tagColors'
 import styles from './TagSuggestions.module.css'
