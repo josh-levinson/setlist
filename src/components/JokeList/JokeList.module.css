@@ -254,12 +254,56 @@
   font-size: 0.75rem;
   color: white;
   font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.moreTagsContainer {
+  position: relative;
+  display: inline-block;
 }
 
 .moreTags {
   color: var(--color-text-muted);
   font-size: 0.75rem;
   font-style: italic;
+  cursor: help;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  background: var(--color-accent-light);
+  transition: background 0.2s ease;
+}
+
+.moreTags:hover {
+  background: var(--color-border);
+}
+
+.tagTooltip {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 150px;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.moreTagsContainer:hover .tagTooltip {
+  display: flex;
 }
 
 .noTags {

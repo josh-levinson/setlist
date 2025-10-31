@@ -80,7 +80,7 @@ export function TagAnalysisPage() {
         return
       }
 
-                  console.log('Calling LLM service...')
+      console.log('Calling LLM service...')
       const suggestionsData = await llmTagService.generateJokeTags(jokesForLLM)
       console.log('LLM response:', suggestionsData)
 
@@ -211,6 +211,24 @@ export function TagAnalysisPage() {
     }
   }
 
+  const handleAcceptAllForAllJokes = async () => {
+    for (const suggestion of suggestions) {
+      const tagsToAccept = suggestion.suggestedTags
+        .filter(tagName => {
+          const currentState = tagStates[suggestion.id]?.[tagName]
+          return currentState !== 'accepted'
+        })
+        .map(tagName => ({
+          name: tagName,
+          color: tagColors[tagName]
+        }))
+
+      if (tagsToAccept.length > 0) {
+        await handleAcceptAll(suggestion.id, tagsToAccept)
+      }
+    }
+  }
+
   const applyAllChanges = async () => {
     if (!user) return
 
@@ -312,23 +330,32 @@ export function TagAnalysisPage() {
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2>Review Suggestions</h2>
-              {hasPendingChanges && (
-                <div className={styles.actionButtons}>
-                  <button
-                    onClick={applyAllChanges}
-                    className={shared.btnPrimary}
-                    disabled={loading}
-                  >
-                    Apply All Changes
-                  </button>
-                  <button
-                    onClick={discardChanges}
-                    className={shared.btnSecondary}
-                  >
-                    Discard Changes
-                  </button>
-                </div>
-              )}
+              <div className={styles.actionButtons}>
+                <button
+                  onClick={handleAcceptAllForAllJokes}
+                  className={shared.btnPrimary}
+                  disabled={loading}
+                >
+                  Accept All for All Jokes
+                </button>
+                {hasPendingChanges && (
+                  <>
+                    <button
+                      onClick={applyAllChanges}
+                      className={shared.btnPrimary}
+                      disabled={loading}
+                    >
+                      Apply All Changes
+                    </button>
+                    <button
+                      onClick={discardChanges}
+                      className={shared.btnSecondary}
+                    >
+                      Discard Changes
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
 
             <div className={styles.suggestionsList}>

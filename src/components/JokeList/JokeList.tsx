@@ -291,19 +291,39 @@ export function JokeList({
                           {joke.tags.slice(0, 2).map((tagId) => {
                             const tag = availableTags.find((t) => t.id === tagId);
                             return tag ? (
-                              <span
+                              <button
                                 key={tagId}
                                 className={styles.tag}
                                 style={{ backgroundColor: tag.color }}
+                                onClick={() => setSelectedTagFilter(tag.id)}
+                                title={`Filter by ${tag.name}`}
                               >
                                 {tag.name}
-                              </span>
+                              </button>
                             ) : null;
                           })}
                           {joke.tags.length > 2 && (
-                            <span className={styles.moreTags}>
-                              +{joke.tags.length - 2}
-                            </span>
+                            <div className={styles.moreTagsContainer}>
+                              <span className={styles.moreTags}>
+                                +{joke.tags.length - 2}
+                              </span>
+                              <div className={styles.tagTooltip}>
+                                {joke.tags.slice(2).map((tagId) => {
+                                  const tag = availableTags.find((t) => t.id === tagId);
+                                  return tag ? (
+                                    <button
+                                      key={tagId}
+                                      className={styles.tag}
+                                      style={{ backgroundColor: tag.color }}
+                                      onClick={() => setSelectedTagFilter(tag.id)}
+                                      title={`Filter by ${tag.name}`}
+                                    >
+                                      {tag.name}
+                                    </button>
+                                  ) : null;
+                                })}
+                              </div>
+                            </div>
                           )}
                         </div>
                       ) : (
