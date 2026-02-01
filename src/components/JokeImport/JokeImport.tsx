@@ -11,6 +11,8 @@ export const JokeImport: React.FC<JokeImportProps> = ({ onImport, onCancel }) =>
   const [importing, setImporting] = useState(false)
   const [isAiProcessing, setIsAiProcessing] = useState(false)
   const [result, setResult] = useState<ImportResult | null>(null)
+  const [selectedJokes, setSelectedJokes] = useState<ImportedJoke[]>([])
+  const [expandedJoke, setExpandedJoke] = useState<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +27,7 @@ export const JokeImport: React.FC<JokeImportProps> = ({ onImport, onCancel }) =>
     try {
       const importResult = await importJokes(file)
       setResult(importResult)
+      setSelectedJokes(importResult.jokes)
     } catch (error) {
       setResult({
         jokes: [],
@@ -37,13 +40,28 @@ export const JokeImport: React.FC<JokeImportProps> = ({ onImport, onCancel }) =>
   }
 
   const handleImport = () => {
-    if (result && result.jokes.length > 0) {
-      onImport(result.jokes)
+    if (selectedJokes.length > 0) {
+      onImport(selectedJokes)
     }
+  }
+
+  const handleRemoveJoke = (index: number) => {
+    setSelectedJokes(prev => prev.filter((_, i) => i !== index))
+    if (expandedJoke === index) {
+      setExpandedJoke(null)
+    } else if (expandedJoke !== null && expandedJoke > index) {
+      setExpandedJoke(expandedJoke - 1)
+    }
+  }
+
+  const toggleExpanded = (index: number) => {
+    setExpandedJoke(expandedJoke === index ? null : index)
   }
 
   const handleReset = () => {
     setResult(null)
+    setSelectedJokes([])
+    setExpandedJoke(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -95,8 +113,15 @@ export const JokeImport: React.FC<JokeImportProps> = ({ onImport, onCancel }) =>
         {result && (
           <div className={styles.results}>
             <div className={styles.summary}>
-              <h3>Import Results</h3>
-              <p>{result.jokes.length} jokes ready to import</p>
+              <h3>Review Jokes</h3>
+              <p>
+                {selectedJokes.length} of {result.jokes.length} jokes selected
+                {selectedJokes.length < result.jokes.length && (
+                  <span className={styles.removedCount}>
+                    {' '}({result.jokes.length - selectedJokes.length} removed)
+                  </span>
+                )}
+              </p>
               {result.errors.length > 0 && (
                 <p className={styles.errorCount}>{result.errors.length} errors found</p>
               )}
@@ -113,27 +138,51 @@ export const JokeImport: React.FC<JokeImportProps> = ({ onImport, onCancel }) =>
               </div>
             )}
 
-            {result.jokes.length > 0 && (
-              <div className={styles.preview}>
-                <h4>Preview ({result.jokes.length} jokes)</h4>
-                <div className={styles.jokesList}>
-                  {result.jokes.slice(0, 5).map((joke, index) => (
-                    <div key={index} className={styles.jokePreview}>
-                      <div className={styles.jokeName}>{joke.name}</div>
-                      <div className={styles.jokeDetails}>
-                        {joke.rating && `Rating: ${joke.rating}`}
-                        {joke.rating && joke.duration && ' | '}
-                        {joke.duration && `Duration: ${joke.duration}m`}
-                        {joke.tags.length > 0 && ` | Tags: ${joke.tags.join(', ')}`}
+            {selectedJokes.length > 0 && (
+              <div className={styles.reviewSection}>
+                <h4>Click to expand, X to remove</h4>
+                <div className={styles.reviewList}>
+                  {selectedJokes.map((joke, index) => (
+                    <div
+                      key={index}
+                      className={`${styles.reviewItem} ${expandedJoke === index ? styles.expanded : ''}`}
+                    >
+                      <div className={styles.reviewHeader}>
+                        <button
+                          type="button"
+                          className={styles.removeBtn}
+                          onClick={() => handleRemoveJoke(index)}
+                          title="Remove joke"
+                        >
+                          ×
+                        </button>
+                        <div
+                          className={styles.reviewInfo}
+                          onClick={() => toggleExpanded(index)}
+                        >
+                          <div className={styles.reviewName}>{joke.name}</div>
+                          <div className={styles.reviewMeta}>
+                            {joke.rating && `Rating: ${joke.rating}`}
+                            {joke.rating && joke.duration && ' | '}
+                            {joke.duration && `${joke.duration}m`}
+                            {joke.tags.length > 0 && ` | ${joke.tags.join(', ')}`}
+                          </div>
+                        </div>
                       </div>
+                      {expandedJoke === index && joke.content && (
+                        <div className={styles.reviewContent}>
+                          {joke.content}
+                        </div>
+                      )}
                     </div>
                   ))}
-                  {result.jokes.length > 5 && (
-                    <div className={styles.moreIndicator}>
-                      ...and {result.jokes.length - 5} more jokes
-                    </div>
-                  )}
                 </div>
+              </div>
+            )}
+
+            {selectedJokes.length === 0 && result.jokes.length > 0 && (
+              <div className={styles.emptyState}>
+                All jokes have been removed. Choose a different file or cancel.
               </div>
             )}
           </div>
@@ -159,13 +208,13 @@ export const JokeImport: React.FC<JokeImportProps> = ({ onImport, onCancel }) =>
           </button>
         )}
         
-        {result && result.jokes.length > 0 && (
-          <button 
-            type="button" 
-            className={styles.importBtn} 
+        {result && selectedJokes.length > 0 && (
+          <button
+            type="button"
+            className={styles.importBtn}
             onClick={handleImport}
           >
-            Import {result.jokes.length} Jokes
+            Accept {selectedJokes.length} Remaining
           </button>
         )}
       </div>

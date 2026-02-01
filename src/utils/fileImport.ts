@@ -1,7 +1,7 @@
 import Papa from 'papaparse'
 import * as XLSX from 'xlsx'
 import mammoth from 'mammoth'
-import { documentParseService, type ParsedJoke } from '../services/dataService'
+import { documentParseService } from '../services/dataService'
 
 export interface ImportedJoke {
   name: string

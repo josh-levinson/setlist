@@ -4,9 +4,32 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
 };
 
-const OPENAI_API_URL = 'https://api.openai.com/v1/responses';
-const PROMPT_ID = 'pmpt_6903fa95eb5481978ffffc714377c44f09fb282ecf7b02cd';
-const PROMPT_VERSION = '4';
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+
+const SYSTEM_PROMPT = `You are a comedy expert assistant that analyzes jokes and suggests relevant tags for categorization.
+
+Given a list of jokes (each with an id and text), analyze each joke and suggest 1-5 relevant tags that describe:
+- The topic or subject matter (e.g., "relationships", "work", "politics", "food")
+- The style or type of humor (e.g., "observational", "self-deprecating", "dark", "pun")
+- The setting or context (e.g., "dating", "family", "travel")
+
+Guidelines:
+- Tags should be lowercase, single words or short phrases (2-3 words max)
+- Be specific but not overly narrow
+- Focus on what makes the joke categorizable and searchable
+- Return tags that would help a comedian organize and find their material
+
+You must respond with a JSON array where each element has:
+- "id": the joke's id (string)
+- "tags": an array of 1-5 suggested tag strings
+
+Example response format:
+[
+  {"id": "123", "tags": ["relationships", "dating", "observational"]},
+  {"id": "456", "tags": ["work", "office", "self-deprecating"]}
+]
+
+Respond ONLY with the JSON array, no other text.`;
 
 Deno.serve(async (req) => {
   // Handle CORS preflight
@@ -53,16 +76,18 @@ Deno.serve(async (req) => {
     console.log('Jokes data:', JSON.stringify(jokesData, null, 2));
 
     const requestBody = {
-      prompt: {
-        id: PROMPT_ID,
-        version: PROMPT_VERSION
-      },
-      input: [
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: SYSTEM_PROMPT
+        },
         {
           role: 'user',
           content: JSON.stringify(jokesData)
         }
-      ]
+      ],
+      temperature: 0.7
     };
 
     console.log('Request body:', JSON.stringify(requestBody, null, 2));
@@ -89,25 +114,14 @@ Deno.serve(async (req) => {
     const data = await response.json();
     console.log('Response data:', JSON.stringify(data, null, 2));
 
-    // Parse the response - it's an object with output array
-    const outputMessage = data.output?.find(item => item.type === 'message');
-    console.log('Output message:', JSON.stringify(outputMessage, null, 2));
-    
-    if (!outputMessage || !outputMessage.content) {
-      console.error('No output message found in response');
+    // Parse the response from chat completions API
+    const outputText = data.choices?.[0]?.message?.content;
+    console.log('Output text:', outputText);
+
+    if (!outputText) {
+      console.error('No output text found in response');
       throw new Error('Invalid API response structure');
     }
-
-    const outputContent = outputMessage.content.find(c => c.type === 'output_text');
-    console.log('Output content:', JSON.stringify(outputContent, null, 2));
-    
-    if (!outputContent || !outputContent.text) {
-      console.error('No output text found in message content');
-      throw new Error('No output text in API response');
-    }
-
-    const outputText = outputContent.text;
-    console.log('Output text:', outputText);
 
     // Parse the JSON array from the output
     let results;

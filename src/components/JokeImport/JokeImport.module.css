@@ -1,5 +1,5 @@
 .container {
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
   padding: 20px;
   background: white;
@@ -145,50 +145,118 @@
   margin-bottom: 2px;
 }
 
-.preview {
-  padding: 12px;
-  background: #f8f9fa;
-  border-radius: 6px;
-  border-left: 4px solid #28a745;
+.removedCount {
+  color: #6c757d;
+  font-style: italic;
 }
 
-.preview h4 {
+.reviewSection {
+  margin-top: 16px;
+}
+
+.reviewSection h4 {
   margin: 0 0 12px 0;
   font-size: 14px;
-  font-weight: 600;
-  color: #28a745;
+  font-weight: 500;
+  color: #666;
 }
 
-.jokesList {
-  max-height: 200px;
+.reviewList {
+  max-height: 400px;
   overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fafafa;
 }
 
-.jokePreview {
-  margin-bottom: 8px;
-  padding: 8px;
+.reviewItem {
+  border-bottom: 1px solid #e0e0e0;
   background: white;
-  border-radius: 4px;
-  border: 1px solid #eee;
 }
 
-.jokeName {
+.reviewItem:last-child {
+  border-bottom: none;
+}
+
+.reviewItem:hover {
+  background: #f8f9fa;
+}
+
+.reviewHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+}
+
+.removeBtn {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: #f0f0f0;
+  color: #999;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.removeBtn:hover {
+  background: #dc3545;
+  color: white;
+}
+
+.reviewInfo {
+  flex: 1;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.reviewName {
   font-weight: 500;
   color: #333;
   margin-bottom: 4px;
+  word-wrap: break-word;
 }
 
-.jokeDetails {
+.reviewMeta {
   font-size: 12px;
   color: #666;
 }
 
-.moreIndicator {
-  padding: 8px;
+.reviewContent {
+  padding: 0 12px 12px 44px;
+  font-size: 13px;
+  color: #555;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  background: #f8f9fa;
+  border-top: 1px solid #eee;
+  margin-top: 8px;
+  padding-top: 12px;
+}
+
+.reviewItem.expanded {
+  background: #fff;
+}
+
+.reviewItem.expanded .reviewHeader {
+  background: #f8f9fa;
+}
+
+.emptyState {
+  padding: 24px;
   text-align: center;
   color: #666;
   font-style: italic;
-  font-size: 13px;
+  background: #f8f9fa;
+  border-radius: 6px;
 }
 
 .actions {
