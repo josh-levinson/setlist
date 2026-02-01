@@ -15,7 +15,7 @@ dist-ssr
 # don't commit secrets!!!
 .env
 
-supabase
+supabase/.temp
 
 # Editor directories and files
 .vscode/*
