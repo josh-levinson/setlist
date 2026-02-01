@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import type { Joke, Tag } from '../types'
-import { JokeViewer } from '../components'
+import { JokeViewer, ConfirmationDialog } from '../components'
 import { useAuth } from '../contexts/AuthContext'
 import { jokeService, tagService } from '../services/dataService'
 import styles from './Pages.module.css'
@@ -13,6 +13,7 @@ export default function JokeViewPage() {
   const [joke, setJoke] = useState<Joke | null>(null)
   const [tags, setTags] = useState<Tag[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   useEffect(() => {
     if (user && id) {
@@ -50,6 +51,25 @@ export default function JokeViewPage() {
     navigate('/jokes')
   }
 
+  const handleDelete = () => {
+    setShowDeleteConfirm(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!joke) return
+    try {
+      await jokeService.deleteJoke(joke.id)
+      navigate('/jokes')
+    } catch (error) {
+      console.error('Error deleting joke:', error)
+    }
+    setShowDeleteConfirm(false)
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false)
+  }
+
   if (isLoading) {
     return (
       <div className={styles.loading}>
@@ -73,6 +93,16 @@ export default function JokeViewPage() {
         availableTags={tags}
         onEdit={handleEdit}
         onBack={handleBack}
+        onDelete={handleDelete}
+      />
+      <ConfirmationDialog
+        isOpen={showDeleteConfirm}
+        title="Delete Joke"
+        message={`Are you sure you want to delete "${joke.name}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
       />
     </div>
   )

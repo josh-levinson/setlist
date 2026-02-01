@@ -61,6 +61,38 @@
   gap: 1rem;
 }
 
+.inputWithButton {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.inputWithButton .input {
+  flex: 1;
+}
+
+.estimateBtn {
+  background: var(--color-accent-light);
+  color: var(--color-text-secondary);
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.estimateBtn:hover:not(:disabled) {
+  background: var(--color-accent);
+  color: white;
+}
+
+.estimateBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .formActions {
   display: flex;
   gap: 1rem;

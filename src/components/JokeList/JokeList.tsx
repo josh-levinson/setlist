@@ -17,6 +17,18 @@ type SortOption = "name" | "rating" | "duration" | "created_at";
 type SortDirection = "asc" | "desc";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
+const ITEMS_PER_PAGE_KEY = 'jokeList.itemsPerPage';
+
+function getStoredItemsPerPage(): number {
+  const stored = localStorage.getItem(ITEMS_PER_PAGE_KEY);
+  if (stored) {
+    const parsed = parseInt(stored, 10);
+    if (ITEMS_PER_PAGE_OPTIONS.includes(parsed)) {
+      return parsed;
+    }
+  }
+  return ITEMS_PER_PAGE_OPTIONS[0];
+}
 
 export function JokeList({
   jokes,
@@ -30,7 +42,7 @@ export function JokeList({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTagFilter, setSelectedTagFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE_OPTIONS[0]);
+  const [itemsPerPage, setItemsPerPage] = useState(getStoredItemsPerPage);
 
   const filteredAndSortedJokes = useMemo(() => {
     const filtered = jokes.filter((joke) => {
@@ -113,6 +125,11 @@ export function JokeList({
     setSelectedTagFilter(null);
   };
 
+  const handleItemsPerPageChange = (value: number) => {
+    setItemsPerPage(value);
+    localStorage.setItem(ITEMS_PER_PAGE_KEY, value.toString());
+  };
+
   const selectedTag = availableTags.find((tag) => tag.id === selectedTagFilter);
 
   const formatDate = (dateString: string) => {
@@ -165,7 +182,7 @@ export function JokeList({
             Show:
             <select
               value={itemsPerPage}
-              onChange={(e) => setItemsPerPage(Number(e.target.value))}
+              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
               className={`${styles.itemsPerPageSelect} ${shared.input}`}
             >
               {ITEMS_PER_PAGE_OPTIONS.map((option) => (

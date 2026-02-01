@@ -6,6 +6,7 @@ import { JokeImport } from '../components/JokeImport'
 import type { ImportedJoke } from '../utils/fileImport'
 import { useAuth } from '../contexts/AuthContext'
 import { jokeService, tagService } from '../services/dataService'
+import { estimateDurationFromText } from '../utils/duration'
 import styles from './Pages.module.css'
 
 export default function JokesPage() {
@@ -16,6 +17,7 @@ export default function JokesPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showImport, setShowImport] = useState(false)
   const [jokeToDelete, setJokeToDelete] = useState<string | null>(null)
+  const [isEstimating, setIsEstimating] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -100,6 +102,38 @@ export default function JokesPage() {
     }
   }
 
+  const handleEstimateAllDurations = async () => {
+    // Find jokes with content that don't have a duration set
+    const jokesToEstimate = jokes.filter(joke => joke.content?.trim() && !joke.duration)
+
+    if (jokesToEstimate.length === 0) {
+      return
+    }
+
+    setIsEstimating(true)
+    try {
+      const updates = jokesToEstimate.map(joke => ({
+        id: joke.id,
+        duration: estimateDurationFromText(joke.content || '')
+      }))
+
+      await jokeService.bulkUpdateJokes(updates)
+
+      // Update local state
+      setJokes(prev => prev.map(joke => {
+        const update = updates.find(u => u.id === joke.id)
+        return update ? { ...joke, duration: update.duration } : joke
+      }))
+    } catch (error) {
+      console.error('Error estimating durations:', error)
+    } finally {
+      setIsEstimating(false)
+    }
+  }
+
+  // Count jokes eligible for estimation
+  const jokesWithoutDuration = jokes.filter(joke => joke.content?.trim() && !joke.duration).length
+
   if (isLoading) {
     return (
       <div className={styles.loading}>
@@ -128,6 +162,16 @@ export default function JokesPage() {
       <div className={styles.pageHeader}>
         <h1>My Jokes</h1>
         <div className={styles.headerActions}>
+          {jokesWithoutDuration > 0 && (
+            <button
+              onClick={handleEstimateAllDurations}
+              className={styles.btnSecondary}
+              disabled={isEstimating}
+              title={`Estimate duration for ${jokesWithoutDuration} joke${jokesWithoutDuration !== 1 ? 's' : ''} with content`}
+            >
+              {isEstimating ? 'Estimating...' : `Estimate Durations (${jokesWithoutDuration})`}
+            </button>
+          )}
           <button onClick={() => setShowImport(true)} className={styles.btnSecondary}>
             Import Jokes
           </button>

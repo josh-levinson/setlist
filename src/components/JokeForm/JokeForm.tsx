@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { Joke, Tag } from "../../types";
 import { TagSelector } from "../TagSelector";
-import { formatSecondsToMMSS, parseMMSSToSeconds, validateDurationInput } from "../../utils/duration";
+import { formatSecondsToMMSS, parseMMSSToSeconds, validateDurationInput, estimateDurationFromText } from "../../utils/duration";
 import styles from "./JokeForm.module.css";
 
 interface JokeFormProps {
@@ -94,6 +94,13 @@ export const JokeForm: React.FC<JokeFormProps> = ({
     setFormData((prev) => ({ ...prev, tags: tagIds }));
   };
 
+  const handleEstimateDuration = () => {
+    const estimatedSeconds = estimateDurationFromText(formData.content);
+    if (estimatedSeconds > 0) {
+      handleInputChange("duration", formatSecondsToMMSS(estimatedSeconds));
+    }
+  };
+
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <h2 className={styles.title}>{joke ? "Edit Joke" : "Add New Joke"}</h2>
@@ -168,16 +175,27 @@ export const JokeForm: React.FC<JokeFormProps> = ({
           <label htmlFor="duration" className={styles.label}>
             Duration (MM:SS, optional)
           </label>
-          <input
-            type="text"
-            id="duration"
-            className={`${styles.input} ${errors.duration ? styles.error : ""}`}
-            value={formData.duration}
-            onChange={(e) =>
-              handleInputChange("duration", e.target.value)
-            }
-            placeholder="1:30 or 90"
-          />
+          <div className={styles.inputWithButton}>
+            <input
+              type="text"
+              id="duration"
+              className={`${styles.input} ${errors.duration ? styles.error : ""}`}
+              value={formData.duration}
+              onChange={(e) =>
+                handleInputChange("duration", e.target.value)
+              }
+              placeholder="1:30 or 90"
+            />
+            <button
+              type="button"
+              className={styles.estimateBtn}
+              onClick={handleEstimateDuration}
+              disabled={!formData.content.trim()}
+              title="Estimate duration from joke content"
+            >
+              Estimate
+            </button>
+          </div>
           {errors.duration && (
             <span className={styles.errorMessage}>{errors.duration}</span>
           )}

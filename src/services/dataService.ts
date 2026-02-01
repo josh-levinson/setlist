@@ -55,6 +55,18 @@ export const jokeService = {
       .eq('id', id)
 
     if (error) throw error
+  },
+
+  async bulkUpdateJokes(updates: { id: string; duration: number }[]): Promise<void> {
+    // Update each joke individually (Supabase doesn't support bulk upsert with different values)
+    await Promise.all(
+      updates.map(({ id, duration }) =>
+        supabase
+          .from('jokes')
+          .update({ duration, updated_at: new Date().toISOString() })
+          .eq('id', id)
+      )
+    )
   }
 }
 

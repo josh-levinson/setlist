@@ -12,6 +12,11 @@
   margin-bottom: 2rem;
 }
 
+.headerActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .editBtn {
   background: none;
   border: none;
@@ -25,6 +30,40 @@
 .editBtn:hover {
   background: #e6fffa;
   transform: scale(1.1);
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  color: #e53e3e;
+}
+
+.deleteBtn:hover {
+  background: #fed7d7;
+  transform: scale(1.1);
+}
+
+.deleteBtnLarge {
+  background: #fed7d7;
+  color: #c53030;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.deleteBtnLarge:hover {
+  background: #fc8181;
+  color: white;
+  transform: translateY(-2px);
 }
 
 .content {
@@ -125,6 +164,7 @@
 .actions {
   display: flex;
   justify-content: center;
+  gap: 1rem;
   margin-top: 2rem;
 }
 

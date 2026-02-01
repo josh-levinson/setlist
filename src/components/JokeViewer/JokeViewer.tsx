@@ -8,9 +8,10 @@ interface JokeViewerProps {
   availableTags: Tag[];
   onEdit: (joke: Joke) => void;
   onBack: () => void;
+  onDelete?: (joke: Joke) => void;
 }
 
-export function JokeViewer({ joke, availableTags, onEdit, onBack }: JokeViewerProps) {
+export function JokeViewer({ joke, availableTags, onEdit, onBack, onDelete }: JokeViewerProps) {
   const jokeTags = availableTags.filter(tag => joke.tags.includes(tag.id));
 
   const renderStars = (rating?: number) => {
@@ -31,9 +32,16 @@ export function JokeViewer({ joke, availableTags, onEdit, onBack }: JokeViewerPr
         <button onClick={onBack} className={shared.btnBack}>
           ← Back to List
         </button>
-        <button onClick={() => onEdit(joke)} className={styles.editBtn}>
-          Edit Joke
-        </button>
+        <div className={styles.headerActions}>
+          <button onClick={() => onEdit(joke)} className={styles.editBtn}>
+            Edit Joke
+          </button>
+          {onDelete && (
+            <button onClick={() => onDelete(joke)} className={styles.deleteBtn}>
+              Delete
+            </button>
+          )}
+        </div>
       </div>
 
       <div className={styles.content}>
@@ -96,6 +104,11 @@ export function JokeViewer({ joke, availableTags, onEdit, onBack }: JokeViewerPr
           <button onClick={() => onEdit(joke)} className={shared.btnPrimary}>
             Edit Joke
           </button>
+          {onDelete && (
+            <button onClick={() => onDelete(joke)} className={styles.deleteBtnLarge}>
+              Delete Joke
+            </button>
+          )}
         </div>
       </div>
     </div>
