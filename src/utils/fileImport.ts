@@ -1,5 +1,7 @@
 import Papa from 'papaparse'
 import * as XLSX from 'xlsx'
+import mammoth from 'mammoth'
+import { documentParseService, type ParsedJoke } from '../services/dataService'
 
 export interface ImportedJoke {
   name: string
@@ -155,17 +157,54 @@ export const parseExcel = (file: File): Promise<ImportResult> => {
   })
 }
 
+export const parseDocx = async (file: File): Promise<string> => {
+  const arrayBuffer = await file.arrayBuffer()
+  const result = await mammoth.extractRawText({ arrayBuffer })
+  return result.value
+}
+
+export const parseDocxWithLLM = async (file: File): Promise<ImportResult> => {
+  try {
+    const text = await parseDocx(file)
+
+    if (!text.trim()) {
+      return {
+        jokes: [],
+        errors: ['The document appears to be empty']
+      }
+    }
+
+    const parsedJokes = await documentParseService.parseDocument(text)
+
+    const jokes: ImportedJoke[] = parsedJokes.map(joke => ({
+      name: joke.name,
+      content: joke.content || undefined,
+      duration: joke.estimatedDuration,
+      tags: joke.suggestedTags
+    }))
+
+    return { jokes, errors: [] }
+  } catch (error) {
+    return {
+      jokes: [],
+      errors: [`Failed to parse document: ${error instanceof Error ? error.message : 'Unknown error'}`]
+    }
+  }
+}
+
 export const importJokes = async (file: File): Promise<ImportResult> => {
   const fileExtension = file.name.split('.').pop()?.toLowerCase()
-  
+
   if (fileExtension === 'csv') {
     return parseCSV(file)
   } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
     return parseExcel(file)
+  } else if (fileExtension === 'docx') {
+    return parseDocxWithLLM(file)
   } else {
     return {
       jokes: [],
-      errors: [`Unsupported file format: ${fileExtension}. Please use CSV or Excel files.`]
+      errors: [`Unsupported file format: ${fileExtension}. Please use CSV, Excel, or Word (.docx) files.`]
     }
   }
 }

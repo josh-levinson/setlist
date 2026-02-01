@@ -68,6 +68,32 @@
   font-style: italic;
 }
 
+.aiLoading {
+  margin-top: 10px;
+  color: #007bff;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.aiLoading::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #007bff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .results {
   border-top: 1px solid #eee;
   padding-top: 20px;

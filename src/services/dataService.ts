@@ -250,3 +250,22 @@ export const llmTagService = {
     return data || []
   }
 }
+
+// Document Parsing Service
+export interface ParsedJoke {
+  name: string
+  content: string
+  suggestedTags: string[]
+  estimatedDuration: number
+}
+
+export const documentParseService = {
+  async parseDocument(text: string): Promise<ParsedJoke[]> {
+    const { data, error } = await supabase.functions.invoke('parse-jokes-document', {
+      body: { text }
+    })
+
+    if (error) throw error
+    return data?.jokes || []
+  }
+}

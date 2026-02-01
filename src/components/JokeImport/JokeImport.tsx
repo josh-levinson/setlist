@@ -9,6 +9,7 @@ interface JokeImportProps {
 
 export const JokeImport: React.FC<JokeImportProps> = ({ onImport, onCancel }) => {
   const [importing, setImporting] = useState(false)
+  const [isAiProcessing, setIsAiProcessing] = useState(false)
   const [result, setResult] = useState<ImportResult | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -16,7 +17,9 @@ export const JokeImport: React.FC<JokeImportProps> = ({ onImport, onCancel }) =>
     const file = event.target.files?.[0]
     if (!file) return
 
+    const isDocx = file.name.toLowerCase().endsWith('.docx')
     setImporting(true)
+    setIsAiProcessing(isDocx)
     setResult(null)
 
     try {
@@ -29,6 +32,7 @@ export const JokeImport: React.FC<JokeImportProps> = ({ onImport, onCancel }) =>
       })
     } finally {
       setImporting(false)
+      setIsAiProcessing(false)
     }
   }
 
@@ -55,21 +59,18 @@ export const JokeImport: React.FC<JokeImportProps> = ({ onImport, onCancel }) =>
             <div className={styles.instructions}>
               <h3>Supported File Formats</h3>
               <ul>
-                <li><strong>CSV files</strong> - Comma-separated values</li>
-                <li><strong>Excel files</strong> - .xlsx or .xls format</li>
+                <li><strong>Word documents (.docx)</strong> - AI will automatically identify and parse jokes</li>
+                <li><strong>CSV files</strong> - Comma-separated values with columns</li>
+                <li><strong>Excel files</strong> - .xlsx or .xls format with columns</li>
               </ul>
-              
-              <h3>Required Columns</h3>
+
+              <h3>For CSV/Excel files</h3>
               <ul>
                 <li><strong>name</strong> - The joke name (required)</li>
-              </ul>
-              
-              <h3>Optional Columns</h3>
-              <ul>
-                <li><strong>content</strong> - The joke content</li>
-                <li><strong>rating</strong> - Rating 1-5</li>
-                <li><strong>duration</strong> - Duration in minutes</li>
-                <li><strong>tags</strong> - Comma-separated tag names</li>
+                <li><strong>content</strong> - The joke content (optional)</li>
+                <li><strong>rating</strong> - Rating 1-5 (optional)</li>
+                <li><strong>duration</strong> - Duration in minutes (optional)</li>
+                <li><strong>tags</strong> - Comma-separated tag names (optional)</li>
               </ul>
             </div>
 
@@ -77,12 +78,16 @@ export const JokeImport: React.FC<JokeImportProps> = ({ onImport, onCancel }) =>
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".csv,.xlsx,.xls"
+                accept=".csv,.xlsx,.xls,.docx"
                 onChange={handleFileSelect}
                 disabled={importing}
                 className={styles.input}
               />
-              {importing && <div className={styles.loading}>Processing file...</div>}
+              {importing && (
+                <div className={isAiProcessing ? styles.aiLoading : styles.loading}>
+                  {isAiProcessing ? 'Analyzing document with AI...' : 'Processing file...'}
+                </div>
+              )}
             </div>
           </>
         )}
