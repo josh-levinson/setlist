@@ -18,6 +18,7 @@ import {
   AuthCallbackPage,
   ResetPasswordPage,
   TagAnalysisPage,
+  SetlistSuggestPage,
 } from "./pages";
 import styles from "./App.module.css";
 import shared from "./styles/shared.module.css";
@@ -113,6 +114,7 @@ function AppContent() {
             <Route path="/jokes/:id/edit" element={<JokeFormPage />} />
             <Route path="/setlists" element={<SetlistsPage />} />
             <Route path="/setlists/new" element={<SetlistFormPage />} />
+            <Route path="/setlists/suggest" element={<SetlistSuggestPage />} />
             <Route path="/setlists/:id" element={<SetlistViewPage />} />
             <Route path="/setlists/:id/edit" element={<SetlistFormPage />} />
             <Route path="/tag-analysis" element={<TagAnalysisPage />} />

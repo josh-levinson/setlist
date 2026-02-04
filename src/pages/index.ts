@@ -7,3 +7,4 @@ export { default as SetlistViewPage } from "./SetlistViewPage";
 export { AuthCallbackPage } from "./AuthCallbackPage";
 export { ResetPasswordPage } from "./ResetPasswordPage";
 export { TagAnalysisPage } from "./TagAnalysisPage";
+export { SetlistSuggestPage } from "./SetlistSuggestPage";

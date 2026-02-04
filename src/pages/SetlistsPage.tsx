@@ -87,13 +87,22 @@ export default function SetlistsPage() {
     ? setlists.find(setlist => setlist.id === setlistToDelete)?.name || 'this setlist'
     : '';
 
+  const handleSuggestSetlist = () => {
+    navigate('/setlists/suggest')
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
         <h1>My Setlists</h1>
-        <button onClick={handleCreateNewSetlist} className={styles.btnPrimary}>
-          + Create New Setlist
-        </button>
+        <div className={styles.headerActions}>
+          <button onClick={handleSuggestSetlist} className={styles.btnSecondary}>
+            Suggest Setlist
+          </button>
+          <button onClick={handleCreateNewSetlist} className={styles.btnPrimary}>
+            + Create New Setlist
+          </button>
+        </div>
       </div>
       
       <SetlistList
