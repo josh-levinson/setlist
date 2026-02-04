@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Setlist, Tag } from '../../types';
 import { calculateSetlistDuration } from '../../types';
 import { formatSecondsToMMSS } from '../../utils/duration';
+import { exportSetlistToCSV, exportSetlistToDocx } from '../../utils/fileExport';
+import { ExportButton } from '../ExportButton';
 import styles from './SetlistViewer.module.css';
 import shared from '../../styles/shared.module.css';
 
@@ -18,6 +20,9 @@ export const SetlistViewer: React.FC<SetlistViewerProps> = ({
   onEdit,
   onBack
 }) => {
+  const [stageMode, setStageMode] = useState(false);
+  const [stageDarkMode, setStageDarkMode] = useState(false);
+
   const getTagById = (tagId: string) => {
     return availableTags.find(tag => tag.id === tagId);
   };
@@ -32,6 +37,47 @@ export const SetlistViewer: React.FC<SetlistViewerProps> = ({
     ? (setlist.jokes.reduce((sum, joke) => sum + (joke.rating || 0), 0) / setlist.jokes.length).toFixed(1)
     : '0.0';
 
+  const handleExportCSV = () => {
+    exportSetlistToCSV(setlist, availableTags);
+  };
+
+  const handleExportDocx = () => {
+    exportSetlistToDocx(setlist, availableTags);
+  };
+
+  if (stageMode) {
+    const stageModeClass = stageDarkMode
+      ? `${styles.stageMode} ${styles.stageModeDark}`
+      : styles.stageMode;
+
+    return (
+      <div className={stageModeClass}>
+        <div className={styles.stageHeader}>
+          <button
+            onClick={() => setStageMode(false)}
+            className={styles.exitStageMode}
+          >
+            Exit
+          </button>
+          <button
+            onClick={() => setStageDarkMode(!stageDarkMode)}
+            className={styles.stageDarkToggle}
+          >
+            {stageDarkMode ? 'Light' : 'Dark'}
+          </button>
+        </div>
+        <h1 className={styles.stageTitle}>{setlist.name}</h1>
+        <ol className={styles.stageList}>
+          {setlist.jokes.map((joke) => (
+            <li key={joke.id} className={styles.stageItem}>
+              {joke.name}
+            </li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.setlistViewer}>
       <div className={styles.header}>
@@ -39,6 +85,16 @@ export const SetlistViewer: React.FC<SetlistViewerProps> = ({
           ← Back to Setlists
         </button>
         <div className={styles.headerActions}>
+          <ExportButton
+            onExportCSV={handleExportCSV}
+            onExportDocx={handleExportDocx}
+          />
+          <button
+            onClick={() => setStageMode(true)}
+            className={`${shared.btn} ${shared.btnSecondary}`}
+          >
+            Stage Mode
+          </button>
           <button onClick={() => onEdit(setlist)} className={`${shared.btn} ${shared.btnPrimary}`}>
             Edit Setlist
           </button>

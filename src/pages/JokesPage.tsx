@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Joke, Tag } from '../types'
-import { JokeList, ConfirmationDialog } from '../components'
+import { JokeList, ConfirmationDialog, ExportButton } from '../components'
 import { JokeImport } from '../components/JokeImport'
 import type { ImportedJoke } from '../utils/fileImport'
+import { exportJokesToCSV, exportJokesToDocx } from '../utils/fileExport'
 import { useAuth } from '../contexts/AuthContext'
 import { jokeService, tagService } from '../services/dataService'
 import { estimateDurationFromText } from '../utils/duration'
@@ -134,6 +135,14 @@ export default function JokesPage() {
   // Count jokes eligible for estimation
   const jokesWithoutDuration = jokes.filter(joke => joke.content?.trim() && !joke.duration).length
 
+  const handleExportCSV = () => {
+    exportJokesToCSV(jokes, tags)
+  }
+
+  const handleExportDocx = () => {
+    exportJokesToDocx(jokes, tags)
+  }
+
   if (isLoading) {
     return (
       <div className={styles.loading}>
@@ -172,6 +181,11 @@ export default function JokesPage() {
               {isEstimating ? 'Estimating...' : `Estimate Durations (${jokesWithoutDuration})`}
             </button>
           )}
+          <ExportButton
+            onExportCSV={handleExportCSV}
+            onExportDocx={handleExportDocx}
+            disabled={jokes.length === 0}
+          />
           <button onClick={() => setShowImport(true)} className={styles.btnSecondary}>
             Import Jokes
           </button>

@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import { Auth } from "./components/Auth";
 import { FeedbackModal } from "./components/FeedbackModal";
+import { Logo } from "./components/Logo";
 import { useAuth } from "./contexts/AuthContext";
 import {
   JokesPage,
@@ -21,6 +22,8 @@ import {
   ResetPasswordPage,
   TagAnalysisPage,
   SetlistSuggestPage,
+  ToolsPage,
+  DurationCalculatorPage,
 } from "./pages";
 import styles from "./App.module.css";
 import shared from "./styles/shared.module.css";
@@ -52,7 +55,7 @@ function AppHeader() {
   return (
     <>
       <header className={styles.header}>
-        <h1 className={styles.title}>🎭 Comedy Setlist Manager</h1>
+        <Logo />
         <nav className={styles.navigation}>
           <Link
             to="/jokes"
@@ -69,11 +72,11 @@ function AppHeader() {
             Setlists
           </Link>
           <Link
-            to="/tag-analysis"
-            className={`${styles.navButton} ${location.pathname.startsWith("/tag-analysis") ? styles.active : ""
+            to="/tools"
+            className={`${styles.navButton} ${location.pathname.startsWith("/tools") ? styles.active : ""
               }`}
           >
-            AI Tags
+            Tools
           </Link>
         </nav>
         <div className={styles.userSection}>
@@ -133,7 +136,10 @@ function AppContent() {
             <Route path="/setlists/suggest" element={<SetlistSuggestPage />} />
             <Route path="/setlists/:id" element={<SetlistViewPage />} />
             <Route path="/setlists/:id/edit" element={<SetlistFormPage />} />
-            <Route path="/tag-analysis" element={<TagAnalysisPage />} />
+            <Route path="/tools" element={<ToolsPage />} />
+            <Route path="/tools/tag-analysis" element={<TagAnalysisPage />} />
+            <Route path="/tools/duration-calculator" element={<DurationCalculatorPage />} />
+            <Route path="/tag-analysis" element={<Navigate to="/tools/tag-analysis" replace />} />
             <Route path="*" element={<Navigate to="/jokes" replace />} />
           </>
         ) : (

@@ -8,3 +8,5 @@ export { AuthCallbackPage } from "./AuthCallbackPage";
 export { ResetPasswordPage } from "./ResetPasswordPage";
 export { TagAnalysisPage } from "./TagAnalysisPage";
 export { SetlistSuggestPage } from "./SetlistSuggestPage";
+export { ToolsPage } from "./ToolsPage";
+export { DurationCalculatorPage } from "./DurationCalculatorPage";

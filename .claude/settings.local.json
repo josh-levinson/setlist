@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun run lint:*)",
+      "Bash(bun run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(bun add:*)",
+      "Bash(timeout 5 bun dev:*)",
+      "Bash(bun install:*)",
+      "Bash(pkill:*)",
+      "Bash(timeout 8 bun dev:*)"
+    ]
+  }
+}

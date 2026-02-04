@@ -9,3 +9,4 @@ export { SetlistForm } from './SetlistForm';
 export { SetlistViewer } from './SetlistViewer';
 export { ConfirmationDialog } from './ConfirmationDialog';
 export { LoginForm, SignUpForm } from './Auth';
+export { ExportButton } from './ExportButton';

@@ -283,10 +283,10 @@ export function TagAnalysisPage() {
       <div className={styles.header}>
         <h1>AI Tag Analysis</h1>
         <button
-          onClick={() => navigate('/jokes')}
+          onClick={() => navigate('/tools')}
           className={shared.btnSecondary}
         >
-          Back to Jokes
+          Back to Tools
         </button>
       </div>
 
