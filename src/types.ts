@@ -41,4 +41,12 @@ export interface AuthState {
   user: User | null;
   loading: boolean;
   error: string | null;
+}
+
+export interface Feedback {
+  id: string;
+  user_id: string;
+  comment: string;
+  page_context?: string;
+  created_at: string;
 } 

@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase'
-import type { Joke, Setlist, Tag } from '../types'
+import type { Joke, Setlist, Tag, Feedback } from '../types'
 
 // Joke operations
 export const jokeService = {
@@ -279,5 +279,19 @@ export const documentParseService = {
 
     if (error) throw error
     return data?.jokes || []
+  }
+}
+
+// Feedback operations
+export const feedbackService = {
+  async createFeedback(feedback: Omit<Feedback, 'id' | 'created_at'>): Promise<Feedback> {
+    const { data, error } = await supabase
+      .from('feedback')
+      .insert([feedback])
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
   }
 }

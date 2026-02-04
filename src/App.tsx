@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,6 +8,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { Auth } from "./components/Auth";
+import { FeedbackModal } from "./components/FeedbackModal";
 import { useAuth } from "./contexts/AuthContext";
 import {
   JokesPage,
@@ -26,6 +28,7 @@ import shared from "./styles/shared.module.css";
 function AppHeader() {
   const { user, signOut } = useAuth();
   const location = useLocation();
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   // Don't show auth wrapper on auth routes
   if (!user && !location.pathname.startsWith("/auth/")) {
@@ -47,38 +50,51 @@ function AppHeader() {
   }
 
   return (
-    <header className={styles.header}>
-      <h1 className={styles.title}>🎭 Comedy Setlist Manager</h1>
-      <nav className={styles.navigation}>
-        <Link
-          to="/jokes"
-          className={`${styles.navButton} ${location.pathname.startsWith("/jokes") ? styles.active : ""
-            }`}
-        >
-          Jokes
-        </Link>
-        <Link
-          to="/setlists"
-          className={`${styles.navButton} ${location.pathname.startsWith("/setlists") ? styles.active : ""
-            }`}
-        >
-          Setlists
-        </Link>
-        <Link
-          to="/tag-analysis"
-          className={`${styles.navButton} ${location.pathname.startsWith("/tag-analysis") ? styles.active : ""
-            }`}
-        >
-          AI Tags
-        </Link>
-      </nav>
-      <div className={styles.userSection}>
-        <span className={styles.userEmail}>{user.email}</span>
-        <button onClick={signOut} className={shared.btnSecondary}>
-          Sign Out
-        </button>
-      </div>
-    </header>
+    <>
+      <header className={styles.header}>
+        <h1 className={styles.title}>🎭 Comedy Setlist Manager</h1>
+        <nav className={styles.navigation}>
+          <Link
+            to="/jokes"
+            className={`${styles.navButton} ${location.pathname.startsWith("/jokes") ? styles.active : ""
+              }`}
+          >
+            Jokes
+          </Link>
+          <Link
+            to="/setlists"
+            className={`${styles.navButton} ${location.pathname.startsWith("/setlists") ? styles.active : ""
+              }`}
+          >
+            Setlists
+          </Link>
+          <Link
+            to="/tag-analysis"
+            className={`${styles.navButton} ${location.pathname.startsWith("/tag-analysis") ? styles.active : ""
+              }`}
+          >
+            AI Tags
+          </Link>
+        </nav>
+        <div className={styles.userSection}>
+          <button
+            onClick={() => setFeedbackOpen(true)}
+            className={shared.btnSecondary}
+          >
+            Feedback
+          </button>
+          <span className={styles.userEmail}>{user.email}</span>
+          <button onClick={signOut} className={shared.btnSecondary}>
+            Sign Out
+          </button>
+        </div>
+      </header>
+      <FeedbackModal
+        isOpen={feedbackOpen}
+        onClose={() => setFeedbackOpen(false)}
+        pageContext={location.pathname}
+      />
+    </>
   );
 }
 
