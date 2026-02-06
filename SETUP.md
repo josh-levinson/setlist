@@ -147,6 +147,23 @@
 
    CREATE TRIGGER update_setlists_updated_at BEFORE UPDATE ON setlists
      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+   -- Create feedback table
+   CREATE TABLE feedback (
+     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+     comment TEXT NOT NULL,
+     page_context TEXT,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+
+   ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
+
+   CREATE POLICY "Users can view their own feedback" ON feedback
+     FOR SELECT USING (auth.uid() = user_id);
+
+   CREATE POLICY "Users can insert their own feedback" ON feedback
+     FOR INSERT WITH CHECK (auth.uid() = user_id);
    ```
 
 ## Running the Application
